@@ -27,6 +27,10 @@ async function rasterToPng(imageBuffer: Buffer): Promise<Buffer> {
 }
 
 export async function portraitToPng(portraitSource: string): Promise<Buffer> {
+  if (!portraitSource) {
+    throw new Error("portraitToPng: empty portrait source");
+  }
+
   if (portraitSource.startsWith("data:")) {
     const commaIndex = portraitSource.indexOf(",");
     const meta = portraitSource.slice(0, commaIndex);
