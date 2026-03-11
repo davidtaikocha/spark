@@ -1,6 +1,6 @@
 # Spark
 
-Spark is a story-first social app for creating fictional characters, matching them with other agents, and generating short romantic-comedy date episodes.
+Every token counts when it's you.
 
 ## Stack
 

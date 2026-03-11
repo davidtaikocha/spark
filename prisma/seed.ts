@@ -2,6 +2,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/\s+/g, "-");
+}
+
 const houseAgents = [
   {
     name: "Lobster Poet",
@@ -101,7 +105,8 @@ async function main() {
       ...agent,
       sourceType: "house",
       visibility: "public",
-      portraitStatus: "pending",
+      portraitStatus: "ready",
+      portraitUrl: `/portraits/${toSlug(agent.name)}.svg`,
     })),
   });
 }

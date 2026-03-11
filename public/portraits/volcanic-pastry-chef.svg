@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1015"/>
+      <stop offset="100%" stop-color="#0d090f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="45%">
+      <stop offset="0%" stop-color="#e89b72" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0.5" y1="1" x2="0.5" y2="0">
+      <stop offset="0%" stop-color="#e89b72"/>
+      <stop offset="50%" stop-color="#d94f68"/>
+      <stop offset="100%" stop-color="#c9a86c" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="768" fill="url(#bg)"/>
+  <ellipse cx="320" cy="380" rx="280" ry="300" fill="url(#glow)"/>
+
+  <!-- Chef hat -->
+  <ellipse cx="320" cy="175" rx="70" ry="30" fill="#f0e6dc" opacity="0.9"/>
+  <rect x="265" y="130" width="110" height="50" rx="10" fill="#f0e6dc" opacity="0.85"/>
+  <ellipse cx="320" cy="130" rx="55" ry="40" fill="#f0e6dc" opacity="0.8"/>
+  <!-- Hat folds -->
+  <path d="M280 145 Q300 155 320 145 Q340 155 360 145" fill="none" stroke="#c4b8ae" stroke-width="1" opacity="0.4"/>
+
+  <!-- Head -->
+  <ellipse cx="320" cy="230" rx="65" ry="70" fill="#3d2030"/>
+  <ellipse cx="320" cy="235" rx="60" ry="62" fill="#4a2838"/>
+
+  <!-- Bold eyebrows -->
+  <path d="M280 215 Q295 208 310 215" fill="none" stroke="#e89b72" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+  <path d="M330 215 Q345 208 360 215" fill="none" stroke="#e89b72" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Eyes - bold, intense -->
+  <ellipse cx="295" cy="232" rx="11" ry="13" fill="#0d090f"/>
+  <ellipse cx="345" cy="232" rx="11" ry="13" fill="#0d090f"/>
+  <circle cx="297" cy="229" r="4" fill="#e89b72" opacity="0.8"/>
+  <circle cx="347" cy="229" r="4" fill="#e89b72" opacity="0.8"/>
+
+  <!-- Confident grin -->
+  <path d="M300 262 Q320 275 340 262" fill="none" stroke="#d4698a" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Body + Apron -->
+  <path d="M240 290 Q320 270 400 290 L420 620 Q320 660 220 620 Z" fill="#3d2030"/>
+  <!-- White apron -->
+  <path d="M270 340 L270 590 Q320 610 370 590 L370 340 Q320 325 270 340 Z" fill="#f0e6dc" opacity="0.15"/>
+  <path d="M270 340 Q320 325 370 340" fill="none" stroke="#f0e6dc" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Arms -->
+  <path d="M240 350 Q180 420 175 480" fill="none" stroke="#3d2030" stroke-width="30" stroke-linecap="round"/>
+  <path d="M400 350 Q460 420 465 480" fill="none" stroke="#3d2030" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Tart/pastry in hand -->
+  <ellipse cx="465" cy="485" rx="35" ry="15" fill="#8a6040"/>
+  <ellipse cx="465" cy="480" rx="30" ry="20" fill="#c9a86c" opacity="0.8"/>
+  <ellipse cx="465" cy="478" rx="25" ry="10" fill="#e89b72" opacity="0.6"/>
+
+  <!-- Fire on the tart! -->
+  <path d="M455 465 Q450 440 460 420 Q465 435 470 425 Q468 445 475 465" fill="url(#flame)" opacity="0.8"/>
+  <path d="M465 470 Q462 450 467 435 Q470 448 465 470" fill="#c9a86c" opacity="0.5"/>
+
+  <!-- Flame accents from hand -->
+  <path d="M175 470 Q170 445 180 430 Q183 448 188 440 Q185 458 178 470" fill="url(#flame)" opacity="0.5"/>
+
+  <!-- Floating embers -->
+  <circle cx="440" cy="380" r="3" fill="#e89b72" opacity="0.5"/>
+  <circle cx="460" cy="350" r="2" fill="#c9a86c" opacity="0.4"/>
+  <circle cx="420" cy="400" r="2" fill="#d94f68" opacity="0.35"/>
+  <circle cx="480" cy="370" r="1.5" fill="#e89b72" opacity="0.3"/>
+  <circle cx="190" cy="400" r="2.5" fill="#e89b72" opacity="0.3"/>
+  <circle cx="170" cy="420" r="1.5" fill="#c9a86c" opacity="0.25"/>
+
+  <!-- Steam/smoke wisps -->
+  <path d="M450 410 Q445 390 455 370" fill="none" stroke="#f0e6dc" stroke-width="1" opacity="0.15"/>
+  <path d="M470 415 Q475 395 465 375" fill="none" stroke="#f0e6dc" stroke-width="1" opacity="0.12"/>
+</svg>

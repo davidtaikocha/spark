@@ -14,12 +14,14 @@ const livePairing = {
       tagline: "Velvet blazer. Sea air heartbreak.",
       bestTrait: "Writes first messages like confessions.",
       redFlag: "Flirts harder when nervous.",
+      portrait: "/portraits/lobster-poet.svg",
     },
     {
       name: "Neon Ghost",
       tagline: "Nightclub apparition. Catastrophic timing.",
       bestTrait: "Knows exactly when to disappear.",
       redFlag: "Treats mystery like a hobby.",
+      portrait: "/portraits/neon-ghost.svg",
     },
   ],
 };
@@ -50,16 +52,19 @@ const featuredProfiles = [
     name: "Clockwork Florist",
     note: "Comes with perfect posture and a hidden spreadsheet of old crushes.",
     hook: "Best first date: moonlit flower market",
+    portrait: "/portraits/clockwork-florist.svg",
   },
   {
     name: "Raincoat Vampire",
     note: "Protective, elegant, and deeply overcommitted to borrowed umbrellas.",
     hook: "Most likely to text back too fast",
+    portrait: "/portraits/raincoat-vampire.svg",
   },
   {
     name: "Champagne Mermaid",
     note: "No indoor voice. Impossibly good hair. Leaves confetti in emotional situations.",
     hook: "Worst habit: turns every apology into a toast",
+    portrait: "/portraits/champagne-mermaid.svg",
   },
 ];
 
@@ -74,38 +79,31 @@ function ProfilePreview({
   tagline,
   bestTrait,
   redFlag,
+  portrait,
   index,
 }: {
   name: string;
   tagline: string;
   bestTrait: string;
   redFlag: string;
+  portrait: string;
   index: number;
 }) {
-  const initials = name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2);
-
   return (
-    <article className="glass-card glass-card-hover rounded-2xl p-5 transition-all duration-300">
-      <div className="flex items-start gap-4">
-        <div
-          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl font-display text-lg font-semibold ${
-            index === 0
-              ? "bg-rose/15 text-rose"
-              : "bg-accent/15 text-accent"
-          }`}
-        >
-          {initials}
-        </div>
-        <div className="min-w-0">
+    <article className="glass-card glass-card-hover rounded-2xl overflow-hidden transition-all duration-300">
+      <div className="relative h-64 overflow-hidden">
+        <img
+          src={portrait}
+          alt={`${name} portrait`}
+          className="h-full w-full object-cover object-top"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(13,9,15,0.85)] via-[rgba(13,9,15,0.3)] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4">
           <p className="font-display text-xl text-ink">{name}</p>
-          <p className="mt-1 text-sm text-muted">{tagline}</p>
+          <p className="mt-0.5 text-sm text-ink/60">{tagline}</p>
         </div>
       </div>
-      <div className="mt-4 space-y-2 text-sm">
+      <div className="space-y-2 p-4 text-sm">
         <p className="text-ink-secondary">{bestTrait}</p>
         <p className="text-rose/70">{redFlag}</p>
       </div>
@@ -114,12 +112,6 @@ function ProfilePreview({
 }
 
 export default function HomePage() {
-  const profileGradients = [
-    "from-rose/15 via-rose/5 to-transparent",
-    "from-accent/15 via-accent/5 to-transparent",
-    "from-gold/15 via-gold/5 to-transparent",
-  ];
-
   return (
     <main className="relative min-h-screen">
       {/* Navigation */}
@@ -341,38 +333,34 @@ export default function HomePage() {
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {featuredProfiles.map((profile, i) => {
-              const initials = profile.name
-                .split(" ")
-                .map((w) => w[0])
-                .join("");
-
-              return (
-                <article
-                  key={profile.name}
-                  className="glass-card glass-card-hover group rounded-2xl p-5 transition-all duration-300"
-                >
-                  <div
-                    className={`flex h-44 items-end rounded-xl bg-gradient-to-br ${profileGradients[i]} p-5`}
-                  >
-                    <div>
-                      <span className="text-xs font-medium uppercase tracking-widest text-muted">
-                        {initials}
-                      </span>
-                      <p className="mt-1 font-display text-3xl tracking-tight text-ink">
-                        {profile.name}
-                      </p>
-                    </div>
+            {featuredProfiles.map((profile) => (
+              <article
+                key={profile.name}
+                className="glass-card glass-card-hover group overflow-hidden rounded-2xl transition-all duration-300"
+              >
+                <div className="relative h-72 overflow-hidden">
+                  <img
+                    src={profile.portrait}
+                    alt={`${profile.name} portrait`}
+                    className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(13,9,15,0.9)] via-[rgba(13,9,15,0.3)] to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p className="font-display text-3xl tracking-tight text-ink">
+                      {profile.name}
+                    </p>
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-muted">
+                </div>
+                <div className="p-5">
+                  <p className="text-sm leading-6 text-muted">
                     {profile.note}
                   </p>
                   <p className="mt-3 text-sm leading-6 text-rose/60">
                     {profile.hook}
                   </p>
-                </article>
-              );
-            })}
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>

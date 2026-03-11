@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#15101e"/>
+      <stop offset="100%" stop-color="#0d090f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="45%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.1"/>
+      <stop offset="60%" stop-color="#d4698a" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#a855f7" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e879f9"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="768" fill="url(#bg)"/>
+  <ellipse cx="320" cy="350" rx="300" ry="340" fill="url(#glow)"/>
+
+  <!-- Ghost body - translucent -->
+  <path d="M240 200 Q240 140 320 140 Q400 140 400 200 L400 520 Q385 500 370 520 Q355 540 340 520 Q325 500 310 520 Q295 540 280 520 Q265 500 240 520 Z" fill="url(#body)"/>
+
+  <!-- Neon outline -->
+  <path d="M240 200 Q240 140 320 140 Q400 140 400 200 L400 520 Q385 500 370 520 Q355 540 340 520 Q325 500 310 520 Q295 540 280 520 Q265 500 240 520 Z" fill="none" stroke="url(#neon)" stroke-width="2" opacity="0.7"/>
+
+  <!-- Inner glow -->
+  <ellipse cx="320" cy="300" rx="60" ry="80" fill="#c084fc" opacity="0.06"/>
+
+  <!-- Eyes - hollow neon -->
+  <ellipse cx="290" cy="240" rx="22" ry="28" fill="#15101e"/>
+  <ellipse cx="350" cy="240" rx="22" ry="28" fill="#15101e"/>
+  <ellipse cx="290" cy="240" rx="22" ry="28" fill="none" stroke="#e879f9" stroke-width="2" opacity="0.8"/>
+  <ellipse cx="350" cy="240" rx="22" ry="28" fill="none" stroke="#22d3ee" stroke-width="2" opacity="0.8"/>
+  <circle cx="290" cy="235" r="6" fill="#e879f9" opacity="0.6"/>
+  <circle cx="350" cy="235" r="6" fill="#22d3ee" opacity="0.6"/>
+
+  <!-- Glitter trail -->
+  <circle cx="260" cy="560" r="3" fill="#e879f9" opacity="0.6"/>
+  <circle cx="300" cy="590" r="2" fill="#22d3ee" opacity="0.5"/>
+  <circle cx="340" cy="575" r="2.5" fill="#c084fc" opacity="0.4"/>
+  <circle cx="370" cy="600" r="2" fill="#e879f9" opacity="0.5"/>
+  <circle cx="280" cy="620" r="1.5" fill="#22d3ee" opacity="0.3"/>
+  <circle cx="320" cy="640" r="3" fill="#c084fc" opacity="0.3"/>
+  <circle cx="360" cy="630" r="1.5" fill="#e879f9" opacity="0.25"/>
+  <circle cx="290" cy="660" r="2" fill="#22d3ee" opacity="0.2"/>
+  <circle cx="340" cy="670" r="2.5" fill="#e879f9" opacity="0.15"/>
+  <circle cx="310" cy="700" r="1.5" fill="#c084fc" opacity="0.1"/>
+
+  <!-- Posture line (perfect posture) -->
+  <line x1="320" y1="150" x2="320" y2="500" stroke="#a855f7" stroke-width="0.5" opacity="0.2" stroke-dasharray="4 8"/>
+
+  <!-- Atmospheric neon reflections -->
+  <ellipse cx="180" cy="400" rx="40" ry="60" fill="#e879f9" opacity="0.03"/>
+  <ellipse cx="460" cy="350" rx="35" ry="50" fill="#22d3ee" opacity="0.03"/>
+
+  <!-- Floating particles -->
+  <circle cx="160" cy="180" r="2" fill="#e879f9" opacity="0.4"/>
+  <circle cx="480" cy="220" r="1.5" fill="#22d3ee" opacity="0.3"/>
+  <circle cx="200" cy="500" r="2" fill="#c084fc" opacity="0.25"/>
+  <circle cx="440" cy="480" r="1.5" fill="#e879f9" opacity="0.2"/>
+</svg>

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#161218"/>
+      <stop offset="100%" stop-color="#0d090f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#e89b72" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c4b8ae"/>
+      <stop offset="30%" stop-color="#847a8e"/>
+      <stop offset="50%" stop-color="#c4b8ae"/>
+      <stop offset="70%" stop-color="#847a8e"/>
+      <stop offset="100%" stop-color="#5a5060"/>
+    </linearGradient>
+    <linearGradient id="slot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e89b72"/>
+      <stop offset="100%" stop-color="#c94a5e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="768" fill="url(#bg)"/>
+  <ellipse cx="320" cy="380" rx="280" ry="300" fill="url(#glow)"/>
+
+  <!-- Stage curtain hints -->
+  <path d="M0 0 Q80 100 60 300" fill="none" stroke="#d4698a" stroke-width="2" opacity="0.08"/>
+  <path d="M640 0 Q560 100 580 300" fill="none" stroke="#d4698a" stroke-width="2" opacity="0.08"/>
+
+  <!-- Toaster body -->
+  <rect x="210" y="250" width="220" height="260" rx="30" fill="url(#chrome)"/>
+  <!-- Chrome highlight -->
+  <rect x="225" y="260" width="8" height="240" rx="4" fill="#f0e6dc" opacity="0.15"/>
+
+  <!-- Toast slots (eyes) -->
+  <rect x="260" y="300" width="45" height="60" rx="8" fill="#1a1321"/>
+  <rect x="335" y="300" width="45" height="60" rx="8" fill="#1a1321"/>
+  <!-- Warm glow from slots -->
+  <rect x="262" y="302" width="41" height="56" rx="6" fill="url(#slot)" opacity="0.3"/>
+  <rect x="337" y="302" width="41" height="56" rx="6" fill="url(#slot)" opacity="0.3"/>
+  <!-- Eye pupils -->
+  <ellipse cx="282" cy="330" rx="8" ry="10" fill="#e89b72" opacity="0.7"/>
+  <ellipse cx="357" cy="330" rx="8" ry="10" fill="#e89b72" opacity="0.7"/>
+  <circle cx="285" cy="326" r="3" fill="#f0e6dc" opacity="0.5"/>
+  <circle cx="360" cy="326" r="3" fill="#f0e6dc" opacity="0.5"/>
+
+  <!-- Lever (nose/accent) -->
+  <rect x="312" y="390" width="16" height="50" rx="8" fill="#5a5060"/>
+  <ellipse cx="320" cy="390" rx="12" ry="8" fill="#847a8e"/>
+
+  <!-- Mouth - singing wide open -->
+  <ellipse cx="320" cy="450" rx="30" ry="20" fill="#1a1321"/>
+  <ellipse cx="320" cy="445" rx="25" ry="12" fill="#c94a5e" opacity="0.3"/>
+
+  <!-- Musical notes emanating -->
+  <g opacity="0.6">
+    <text x="450" y="250" font-size="28" fill="#c9a86c" font-family="serif">&#9835;</text>
+    <text x="475" y="310" font-size="22" fill="#d4698a" font-family="serif">&#9834;</text>
+    <text x="490" y="380" font-size="32" fill="#e89b72" font-family="serif">&#9833;</text>
+    <text x="160" y="280" font-size="24" fill="#d4698a" font-family="serif">&#9835;</text>
+    <text x="140" y="350" font-size="30" fill="#c9a86c" font-family="serif">&#9834;</text>
+  </g>
+
+  <!-- Sound waves -->
+  <path d="M440 380 Q460 360 440 340" fill="none" stroke="#e89b72" stroke-width="2" opacity="0.2"/>
+  <path d="M455 390 Q480 360 455 330" fill="none" stroke="#e89b72" stroke-width="2" opacity="0.15"/>
+  <path d="M470 400 Q500 360 470 320" fill="none" stroke="#e89b72" stroke-width="2" opacity="0.1"/>
+  <path d="M200 380 Q180 360 200 340" fill="none" stroke="#d4698a" stroke-width="2" opacity="0.2"/>
+  <path d="M185 390 Q160 360 185 330" fill="none" stroke="#d4698a" stroke-width="2" opacity="0.15"/>
+
+  <!-- Tiny bow tie -->
+  <path d="M305 520 L320 530 L335 520 L335 540 L320 530 L305 540 Z" fill="#c94a5e" opacity="0.6"/>
+
+  <!-- Base/feet -->
+  <rect x="230" y="510" width="180" height="20" rx="5" fill="#5a5060"/>
+
+  <!-- Small legs -->
+  <rect x="250" y="530" width="12" height="30" rx="4" fill="#847a8e" opacity="0.6"/>
+  <rect x="378" y="530" width="12" height="30" rx="4" fill="#847a8e" opacity="0.6"/>
+
+  <!-- Spotlight effect from above -->
+  <path d="M250 0 L300 250 L340 250 L390 0" fill="#f0e6dc" opacity="0.02"/>
+</svg>

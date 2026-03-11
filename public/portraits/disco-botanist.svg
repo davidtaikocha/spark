@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0e150e"/>
+      <stop offset="100%" stop-color="#0d090f"/>
+    </linearGradient>
+    <radialGradient id="discoGlow" cx="65%" cy="25%" r="30%">
+      <stop offset="0%" stop-color="#c9a86c" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ballShine" cx="40%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#f0e6dc"/>
+      <stop offset="100%" stop-color="#847a8e"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="768" fill="url(#bg)"/>
+  <circle cx="440" cy="160" r="200" fill="url(#discoGlow)"/>
+
+  <!-- Disco ball -->
+  <circle cx="440" cy="140" r="45" fill="#2a2a30"/>
+  <circle cx="440" cy="140" r="43" fill="url(#ballShine)" opacity="0.15"/>
+  <!-- Mirror tiles -->
+  <g opacity="0.4">
+    <rect x="425" y="115" width="8" height="8" rx="1" fill="#f0e6dc" opacity="0.6"/>
+    <rect x="440" y="118" width="8" height="8" rx="1" fill="#c9a86c" opacity="0.5"/>
+    <rect x="455" y="125" width="8" height="8" rx="1" fill="#f0e6dc" opacity="0.4"/>
+    <rect x="420" y="132" width="8" height="8" rx="1" fill="#c9a86c" opacity="0.5"/>
+    <rect x="448" y="135" width="8" height="8" rx="1" fill="#f0e6dc" opacity="0.6"/>
+    <rect x="430" y="148" width="8" height="8" rx="1" fill="#c9a86c" opacity="0.4"/>
+    <rect x="450" y="150" width="8" height="8" rx="1" fill="#f0e6dc" opacity="0.5"/>
+    <rect x="438" y="160" width="8" height="8" rx="1" fill="#c9a86c" opacity="0.3"/>
+  </g>
+  <!-- String -->
+  <line x1="440" y1="95" x2="440" y2="50" stroke="#847a8e" stroke-width="1" opacity="0.3"/>
+
+  <!-- Disco light rays -->
+  <g opacity="0.06" stroke-width="2">
+    <line x1="440" y1="140" x2="100" y2="300" stroke="#c9a86c"/>
+    <line x1="440" y1="140" x2="150" y2="600" stroke="#e89b72"/>
+    <line x1="440" y1="140" x2="550" y2="400" stroke="#d4698a"/>
+    <line x1="440" y1="140" x2="80" y2="500" stroke="#4a8ab5"/>
+    <line x1="440" y1="140" x2="580" y2="600" stroke="#c9a86c"/>
+  </g>
+
+  <!-- Head -->
+  <ellipse cx="280" cy="230" rx="58" ry="65" fill="#1a2a1a"/>
+  <ellipse cx="280" cy="235" rx="52" ry="57" fill="#253025"/>
+
+  <!-- Wild curly hair -->
+  <circle cx="250" cy="195" r="20" fill="#2a3a2a"/>
+  <circle cx="280" cy="180" r="22" fill="#2a3a2a"/>
+  <circle cx="310" cy="195" r="18" fill="#2a3a2a"/>
+  <circle cx="240" cy="215" r="15" fill="#2a3a2a"/>
+  <circle cx="320" cy="215" r="14" fill="#2a3a2a"/>
+
+  <!-- Sunglasses -->
+  <rect x="252" y="222" width="24" height="20" rx="5" fill="#0d090f"/>
+  <rect x="284" y="222" width="24" height="20" rx="5" fill="#0d090f"/>
+  <line x1="276" y1="232" x2="284" y2="232" stroke="#847a8e" stroke-width="1.5"/>
+  <!-- Mirror reflection on glasses -->
+  <rect x="256" y="226" width="8" height="4" rx="2" fill="#c9a86c" opacity="0.4"/>
+  <rect x="288" y="226" width="8" height="4" rx="2" fill="#d4698a" opacity="0.4"/>
+
+  <!-- Confident smirk -->
+  <path d="M268 260 Q280 270 295 262" fill="none" stroke="#d4698a" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Body - open shirt -->
+  <path d="M220 295 Q280 275 340 295 L355 600 Q280 640 205 600 Z" fill="#253025"/>
+  <!-- Shirt opening -->
+  <path d="M260 300 L280 380 L300 300" fill="#1a2a1a" opacity="0.5"/>
+
+  <!-- Mirrored trousers -->
+  <path d="M225 480 L215 650 L265 650 L280 500 L295 650 L345 650 L335 480 Z" fill="#3a3a40"/>
+  <!-- Mirror reflections on pants -->
+  <rect x="230" y="520" width="15" height="6" rx="2" fill="#c9a86c" opacity="0.15"/>
+  <rect x="245" y="560" width="12" height="5" rx="2" fill="#f0e6dc" opacity="0.12"/>
+  <rect x="300" y="530" width="14" height="6" rx="2" fill="#d4698a" opacity="0.12"/>
+  <rect x="310" y="580" width="10" height="5" rx="2" fill="#c9a86c" opacity="0.1"/>
+
+  <!-- Arm holding plant -->
+  <path d="M340 330 Q390 380 400 450" fill="none" stroke="#253025" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Potted fern -->
+  <rect x="385" y="450" width="40" height="35" rx="5" fill="#5a3d30"/>
+  <ellipse cx="405" cy="450" rx="22" ry="5" fill="#6a4d3a"/>
+  <!-- Fern fronds -->
+  <path d="M405 445 Q395 410 375 395" fill="none" stroke="#4a7a4a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M405 445 Q410 405 405 380" fill="none" stroke="#5a8a5a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M405 445 Q420 415 435 400" fill="none" stroke="#4a7a4a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M405 445 Q390 420 380 410" fill="none" stroke="#5a8a5a" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M405 445 Q425 420 440 415" fill="none" stroke="#4a7a4a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Tiny leaf details -->
+  <ellipse cx="378" cy="398" rx="5" ry="3" fill="#4a7a4a" opacity="0.6" transform="rotate(-30 378 398)"/>
+  <ellipse cx="407" cy="383" rx="5" ry="3" fill="#5a8a5a" opacity="0.6"/>
+  <ellipse cx="433" cy="403" rx="5" ry="3" fill="#4a7a4a" opacity="0.6" transform="rotate(25 433 403)"/>
+
+  <!-- Disco floor spots -->
+  <circle cx="150" cy="650" r="20" fill="#c9a86c" opacity="0.03"/>
+  <circle cx="320" cy="680" r="25" fill="#d4698a" opacity="0.03"/>
+  <circle cx="500" cy="660" r="18" fill="#4a8ab5" opacity="0.03"/>
+</svg>

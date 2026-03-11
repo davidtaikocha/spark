@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#180e1e"/>
+      <stop offset="100%" stop-color="#0d090f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="45%">
+      <stop offset="0%" stop-color="#8b2a5e" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="coat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d2244"/>
+      <stop offset="100%" stop-color="#241830"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="768" fill="url(#bg)"/>
+  <ellipse cx="320" cy="360" rx="280" ry="320" fill="url(#glow)"/>
+
+  <!-- Rain drops -->
+  <g opacity="0.15" stroke="#7ec8e3" stroke-width="1" stroke-linecap="round">
+    <line x1="120" y1="80" x2="118" y2="100"/>
+    <line x1="200" y1="40" x2="198" y2="58"/>
+    <line x1="440" y1="60" x2="438" y2="80"/>
+    <line x1="520" y1="100" x2="518" y2="118"/>
+    <line x1="160" y1="200" x2="158" y2="218"/>
+    <line x1="480" y1="180" x2="478" y2="200"/>
+    <line x1="100" y1="350" x2="98" y2="368"/>
+    <line x1="540" y1="320" x2="538" y2="340"/>
+    <line x1="140" y1="500" x2="138" y2="520"/>
+    <line x1="500" y1="480" x2="498" y2="500"/>
+  </g>
+
+  <!-- Cape/Raincoat - tall dramatic silhouette -->
+  <path d="M220 250 L200 650 Q320 700 440 650 L420 250 Q320 220 220 250 Z" fill="url(#coat)"/>
+  <!-- Coat collar - popped -->
+  <path d="M230 260 Q250 230 270 250" fill="#4a2a52" opacity="0.8"/>
+  <path d="M410 260 Q390 230 370 250" fill="#4a2a52" opacity="0.8"/>
+
+  <!-- Head - pale -->
+  <ellipse cx="320" cy="210" rx="60" ry="70" fill="#2a1830"/>
+  <ellipse cx="320" cy="215" rx="55" ry="62" fill="#3d2244"/>
+
+  <!-- Slicked back hair -->
+  <path d="M265 195 Q265 155 320 148 Q375 155 375 195 L370 210 Q370 175 320 170 Q270 175 270 210 Z" fill="#1a0e20"/>
+
+  <!-- Eyes - deep red -->
+  <ellipse cx="298" cy="215" rx="10" ry="12" fill="#0d090f"/>
+  <ellipse cx="342" cy="215" rx="10" ry="12" fill="#0d090f"/>
+  <circle cx="299" cy="212" r="4" fill="#c94a5e" opacity="0.9"/>
+  <circle cx="343" cy="212" r="4" fill="#c94a5e" opacity="0.9"/>
+  <circle cx="301" cy="210" r="1.5" fill="#f0e6dc" opacity="0.6"/>
+  <circle cx="345" cy="210" r="1.5" fill="#f0e6dc" opacity="0.6"/>
+
+  <!-- Subtle fangs -->
+  <path d="M308 242 L311 252" stroke="#f0e6dc" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+  <path d="M332 242 L329 252" stroke="#f0e6dc" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+  <!-- Slight smile -->
+  <path d="M305 242 Q320 250 335 242" fill="none" stroke="#d4698a" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Umbrella held -->
+  <line x1="460" y1="160" x2="440" y2="600" stroke="#847a8e" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+  <!-- Umbrella canopy -->
+  <path d="M370 165 Q420 120 470 165 Q460 160 450 165 Q440 155 430 165 Q420 155 410 165 Q400 155 390 165 Q380 160 370 165 Z" fill="#4a2a52" opacity="0.8"/>
+
+  <!-- Red scarf peeking from coat -->
+  <path d="M290 270 Q320 285 350 270 Q345 300 320 295 Q295 300 290 270" fill="#c94a5e" opacity="0.4"/>
+
+  <!-- Coat buttons -->
+  <circle cx="320" cy="350" r="4" fill="#847a8e" opacity="0.3"/>
+  <circle cx="320" cy="400" r="4" fill="#847a8e" opacity="0.25"/>
+  <circle cx="320" cy="450" r="4" fill="#847a8e" opacity="0.2"/>
+
+  <!-- Puddle reflection -->
+  <ellipse cx="320" cy="690" rx="120" ry="15" fill="#7ec8e3" opacity="0.04"/>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#18121a"/>
+      <stop offset="100%" stop-color="#0d090f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="45%">
+      <stop offset="0%" stop-color="#d4698a" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="porcelain" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0e6dc" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#c4b8ae" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="768" fill="url(#bg)"/>
+  <ellipse cx="320" cy="370" rx="280" ry="310" fill="url(#glow)"/>
+
+  <!-- Head - elegant porcelain -->
+  <ellipse cx="320" cy="200" rx="65" ry="75" fill="#f0e6dc" opacity="0.12"/>
+  <ellipse cx="320" cy="205" rx="60" ry="68" fill="#f0e6dc" opacity="0.15"/>
+
+  <!-- Porcelain crackle pattern -->
+  <g opacity="0.06" stroke="#847a8e" stroke-width="0.5" fill="none">
+    <path d="M300 180 L295 195 L305 210"/>
+    <path d="M340 185 L345 200 L335 210"/>
+    <path d="M310 170 L315 185"/>
+    <path d="M330 175 L325 190"/>
+  </g>
+
+  <!-- Styled hair - updo -->
+  <path d="M260 185 Q260 130 320 120 Q380 130 380 185" fill="#2a1830"/>
+  <path d="M265 175 Q265 145 320 138 Q375 145 375 175" fill="#3d2244"/>
+  <!-- Hair pin -->
+  <line x1="355" y1="145" x2="370" y2="130" stroke="#c9a86c" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="372" cy="128" r="4" fill="#c9a86c" opacity="0.5"/>
+
+  <!-- Eyeliner - perfect -->
+  <path d="M285 198 Q298 192 310 200" fill="none" stroke="#1a1321" stroke-width="2.5"/>
+  <path d="M330 200 Q342 192 355 198" fill="none" stroke="#1a1321" stroke-width="2.5"/>
+  <!-- Wing -->
+  <path d="M280 198 L275 194" stroke="#1a1321" stroke-width="2" stroke-linecap="round"/>
+  <path d="M360 198 L365 194" stroke="#1a1321" stroke-width="2" stroke-linecap="round"/>
+  <!-- Eyes -->
+  <ellipse cx="298" cy="205" rx="8" ry="10" fill="#1a1321" opacity="0.8"/>
+  <ellipse cx="342" cy="205" rx="8" ry="10" fill="#1a1321" opacity="0.8"/>
+  <circle cx="300" cy="202" r="3" fill="#d4698a" opacity="0.7"/>
+  <circle cx="344" cy="202" r="3" fill="#d4698a" opacity="0.7"/>
+
+  <!-- Lips -->
+  <path d="M308 235 Q320 243 332 235" fill="#d4698a" opacity="0.3"/>
+
+  <!-- Body - wrestling leotard -->
+  <path d="M255 270 Q320 250 385 270 L400 520 Q320 550 240 520 Z" fill="url(#porcelain)"/>
+  <!-- Wrestling straps -->
+  <line x1="290" y1="270" x2="280" y2="320" stroke="#d4698a" stroke-width="3" opacity="0.25"/>
+  <line x1="350" y1="270" x2="360" y2="320" stroke="#d4698a" stroke-width="3" opacity="0.25"/>
+
+  <!-- Arms - power pose -->
+  <path d="M255 310 Q200 290 180 250" fill="none" stroke="#f0e6dc" stroke-width="22" stroke-linecap="round" opacity="0.12"/>
+  <path d="M385 310 Q440 290 460 250" fill="none" stroke="#f0e6dc" stroke-width="22" stroke-linecap="round" opacity="0.12"/>
+
+  <!-- Fists -->
+  <circle cx="175" cy="245" r="16" fill="#f0e6dc" opacity="0.12"/>
+  <circle cx="465" cy="245" r="16" fill="#f0e6dc" opacity="0.12"/>
+
+  <!-- Belt -->
+  <rect x="260" y="430" width="120" height="20" rx="5" fill="#c9a86c" opacity="0.15"/>
+  <circle cx="320" cy="440" r="8" fill="#c9a86c" opacity="0.2"/>
+
+  <!-- Championship belt detail -->
+  <path d="M300 436 L310 430 L320 440 L330 430 L340 436" fill="none" stroke="#c9a86c" stroke-width="1" opacity="0.3"/>
+
+  <!-- Legs - strong stance -->
+  <path d="M270 520 L255 680" fill="none" stroke="#f0e6dc" stroke-width="26" stroke-linecap="round" opacity="0.1"/>
+  <path d="M370 520 L385 680" fill="none" stroke="#f0e6dc" stroke-width="26" stroke-linecap="round" opacity="0.1"/>
+
+  <!-- Porcelain crackle on body -->
+  <g opacity="0.04" stroke="#847a8e" stroke-width="0.5" fill="none">
+    <path d="M300 350 L310 380 L295 400"/>
+    <path d="M340 360 L330 385 L345 410"/>
+    <path d="M315 320 L320 350"/>
+  </g>
+
+  <!-- Ring ropes suggestion -->
+  <line x1="80" y1="350" x2="560" y2="350" stroke="#d4698a" stroke-width="2" opacity="0.04"/>
+  <line x1="80" y1="450" x2="560" y2="450" stroke="#d4698a" stroke-width="2" opacity="0.03"/>
+
+  <!-- Sparkle accents (glamorous) -->
+  <g opacity="0.4">
+    <path d="M170 180 L172 175 L174 180 L179 182 L174 184 L172 189 L170 184 L165 182 Z" fill="#f0e6dc"/>
+    <path d="M470 200 L472 196 L474 200 L478 202 L474 204 L472 208 L470 204 L466 202 Z" fill="#d4698a"/>
+    <path d="M150 450 L151 447 L152 450 L155 451 L152 452 L151 455 L150 452 L147 451 Z" fill="#c9a86c"/>
+  </g>
+</svg>
