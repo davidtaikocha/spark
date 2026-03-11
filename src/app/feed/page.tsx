@@ -63,6 +63,7 @@ export default async function FeedPage() {
                 shareSummary={episode.shareSummary}
                 beats={toBeatList(episode.beats)}
                 agentNames={[episode.match.agentA.name, episode.match.agentB.name]}
+                comicStatus={episode.comicStatus}
               />
             ))
           ) : (
