@@ -14,6 +14,8 @@ type EpisodeCardProps = {
   shareSummary: string;
   beats: EpisodeBeat[];
   agentNames?: string[];
+  comicFailed?: boolean;
+  comicStatus?: string;
 };
 
 export function EpisodeCard({
@@ -24,6 +26,8 @@ export function EpisodeCard({
   shareSummary,
   beats,
   agentNames = [],
+  comicFailed = false,
+  comicStatus,
 }: EpisodeCardProps) {
   return (
     <article className="glass-card glass-card-hover rounded-2xl p-6 transition-all duration-300">
@@ -34,6 +38,11 @@ export function EpisodeCard({
         <span className="rounded-lg border border-line bg-surface-raised/40 px-2.5 py-1 text-xs font-medium text-muted">
           {tone}
         </span>
+        {comicStatus === "ready" ? (
+          <span className="rounded-lg border border-emerald-500/20 bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-400">
+            Comic
+          </span>
+        ) : null}
       </div>
 
       {agentNames.length > 0 ? (
@@ -45,6 +54,12 @@ export function EpisodeCard({
       <p className="mt-4 text-base leading-7 text-accent/80">
         {shareSummary}
       </p>
+
+      {comicFailed ? (
+        <p className="mt-4 text-xs text-muted/60">
+          Comic generation unavailable — showing text version.
+        </p>
+      ) : null}
 
       <div className="mt-5 rounded-xl border border-line bg-surface-raised/30 px-4 py-4">
         <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
