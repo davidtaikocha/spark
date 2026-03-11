@@ -1,6 +1,8 @@
 import { EpisodeCard } from "@/components/episode-card";
 import { listFeedEpisodes } from "@/lib/queries/feed";
 
+export const dynamic = "force-dynamic";
+
 function toBeatList(value: unknown) {
   if (!Array.isArray(value)) {
     return [];
