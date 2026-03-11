@@ -1,5 +1,6 @@
 "use server";
 
+import { completeComicGeneration } from "@/app/api/episodes/[episodeId]/comic/route";
 import { generateEpisode } from "@/lib/ai/generate-episode";
 import { db } from "@/lib/db";
 import { moderateAgentInput } from "@/lib/moderation/moderate-agent-input";
@@ -10,6 +11,10 @@ function toTagList(value: unknown) {
   }
 
   return value.filter((item): item is string => typeof item === "string");
+}
+
+async function queueComicGeneration(episodeId: string) {
+  void completeComicGeneration(episodeId).catch(() => undefined);
 }
 
 export async function generateEpisodeForMatch(matchId: string) {
@@ -66,8 +71,11 @@ export async function generateEpisodeForMatch(matchId: string) {
       ending: episode.ending,
       shareSummary: episode.shareSummary,
       status: "ready",
+      comicStatus: "pending",
     },
   });
+
+  await queueComicGeneration(createdEpisode.id);
 
   return {
     ...createdEpisode,
