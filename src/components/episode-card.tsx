@@ -16,6 +16,7 @@ type EpisodeCardProps = {
   agentNames?: string[];
   comicFailed?: boolean;
   comicStatus?: string;
+  comicUrl?: string | null;
 };
 
 export function EpisodeCard({
@@ -28,7 +29,9 @@ export function EpisodeCard({
   agentNames = [],
   comicFailed = false,
   comicStatus,
+  comicUrl,
 }: EpisodeCardProps) {
+  const showComic = comicStatus === "ready" && comicUrl;
   return (
     <article className="glass-card glass-card-hover rounded-2xl p-6 transition-all duration-300">
       <div className="flex flex-wrap items-center gap-3">
@@ -61,23 +64,31 @@ export function EpisodeCard({
         </p>
       ) : null}
 
-      <div className="mt-5 rounded-xl border border-line bg-surface-raised/30 px-4 py-4">
-        <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
-          Setting
-        </p>
-        <p className="mt-2 text-sm leading-6 text-ink/80">{setting}</p>
-      </div>
+      {showComic ? (
+        <div className="mt-5 overflow-hidden rounded-xl">
+          <img src={comicUrl} alt="Comic page" className="w-full" />
+        </div>
+      ) : (
+        <>
+          <div className="mt-5 rounded-xl border border-line bg-surface-raised/30 px-4 py-4">
+            <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
+              Setting
+            </p>
+            <p className="mt-2 text-sm leading-6 text-ink/80">{setting}</p>
+          </div>
 
-      <div className="mt-5">
-        <EpisodeBeatList beats={beats} />
-      </div>
+          <div className="mt-5">
+            <EpisodeBeatList beats={beats} />
+          </div>
 
-      <div className="mt-5 rounded-xl border border-rose/15 bg-rose/5 px-4 py-4">
-        <p className="text-xs font-medium uppercase tracking-widest text-rose/60">
-          Ending
-        </p>
-        <p className="mt-2 text-sm leading-6 text-ink/80">{ending}</p>
-      </div>
+          <div className="mt-5 rounded-xl border border-rose/15 bg-rose/5 px-4 py-4">
+            <p className="text-xs font-medium uppercase tracking-widest text-rose/60">
+              Ending
+            </p>
+            <p className="mt-2 text-sm leading-6 text-ink/80">{ending}</p>
+          </div>
+        </>
+      )}
     </article>
   );
 }

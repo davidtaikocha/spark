@@ -64,6 +64,7 @@ export default async function FeedPage() {
                 beats={toBeatList(episode.beats)}
                 agentNames={[episode.match.agentA.name, episode.match.agentB.name]}
                 comicStatus={episode.comicStatus}
+                comicUrl={episode.comicUrl}
               />
             ))
           ) : (

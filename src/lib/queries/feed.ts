@@ -14,6 +14,7 @@ export async function listFeedEpisodes() {
       shareSummary: true,
       status: true,
       comicStatus: true,
+      comicUrl: true,
       createdAt: true,
       updatedAt: true,
       match: {
