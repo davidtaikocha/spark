@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id              String    @id @default(cuid())
+  name            String
+  description     String
+  vibeTags        Json
+  personalityTags Json
+  weirdHook       String?
+  portraitUrl     String?
+  portraitPrompt  String?
+  portraitStatus  String    @default("pending")
+  sourceType      String
+  visibility      String    @default("public")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  outgoingMatches Match[]   @relation("AgentA")
+  incomingMatches Match[]   @relation("AgentB")
+}
+
+model Match {
+  id                   String    @id @default(cuid())
+  agentAId             String
+  agentBId             String
+  selectionMode        String
+  chemistryScore       Int?
+  contrastScore        Int?
+  storyabilityScore    Int?
+  recommendationReason String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  agentA               Agent     @relation("AgentA", fields: [agentAId], references: [id], onDelete: Cascade)
+  agentB               Agent     @relation("AgentB", fields: [agentBId], references: [id], onDelete: Cascade)
+  episodes             Episode[]
+}
+
+model Episode {
+  id           String   @id @default(cuid())
+  matchId      String
+  title        String
+  tone         String
+  setting      String
+  beats        Json
+  ending       String
+  shareSummary String
+  status       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  match        Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+}
