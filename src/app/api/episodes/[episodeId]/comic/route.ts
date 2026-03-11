@@ -1,3 +1,6 @@
+import { mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
+
 import { NextResponse } from "next/server";
 
 import { generateComicPage } from "@/lib/ai/generate-comic";
@@ -54,18 +57,29 @@ export async function completeComicGeneration(episodeId: string) {
       { agentA: agentAPng, agentB: agentBPng },
     );
 
-    await db.episode.update({
+    const slug = episode.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    const fileName = `${slug}.png`;
+    const comicsDir = path.join(process.cwd(), "public", "comics");
+    mkdirSync(comicsDir, { recursive: true });
+    writeFileSync(path.join(comicsDir, fileName), Buffer.from(comic.image.base64, "base64"));
+
+    return await db.episode.update({
       where: { id: episodeId },
       data: {
-        comicUrl: `data:${comic.image.mediaType};base64,${comic.image.base64}`,
+        comicUrl: `/comics/${fileName}`,
         comicStatus: "ready",
       },
     });
-  } catch {
+  } catch (error) {
     await db.episode.update({
       where: { id: episodeId },
       data: { comicStatus: "failed" },
     });
+
+    throw error;
   }
 }
 
@@ -75,12 +89,7 @@ export async function POST(
 ) {
   const { episodeId } = await context.params;
 
-  await completeComicGeneration(episodeId);
-
-  const episode = await db.episode.findUniqueOrThrow({
-    where: { id: episodeId },
-    select: { id: true, comicStatus: true },
-  });
+  const episode = await completeComicGeneration(episodeId);
 
   return NextResponse.json({
     id: episode.id,

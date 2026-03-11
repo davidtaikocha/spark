@@ -2,11 +2,13 @@
 
 import { completePortraitGeneration } from "@/app/api/agents/[agentId]/portrait/route";
 import { agentInputSchema } from "@/lib/domain/agent";
+import { extractAgentReplySections } from "@/lib/domain/agent-reply";
 import { db } from "@/lib/db";
+import { interpretAgentReply } from "@/lib/ai/interpret-agent-reply";
 import { normalizeAgent } from "@/lib/ai/normalize-agent";
 import { moderateAgentInput } from "@/lib/moderation/moderate-agent-input";
 
-type CreateAgentInput = {
+export type CreateAgentInput = {
   name: string;
   description: string;
   vibeTags: string[];
@@ -14,13 +16,178 @@ type CreateAgentInput = {
   weirdHook?: string;
 };
 
-export async function createAgent(input: CreateAgentInput) {
-  const parsed = agentInputSchema.parse({
-    ...input,
-    weirdHook: input.weirdHook?.trim() || undefined,
-    sourceType: "user",
-    visibility: "public",
+export type PreparedAgentDraft = CreateAgentInput;
+export type DraftMode = "structured" | "mixed" | "interpreted";
+
+export type PrepareAgentDraftResult =
+  | {
+      draft: PreparedAgentDraft;
+      missingFields: string[];
+      mode: DraftMode;
+    }
+  | {
+      error: string;
+      draft?: PreparedAgentDraft;
+      missingFields?: string[];
+      mode?: DraftMode;
+    };
+
+export type ParseAgentReplyState = {
+  draft: PreparedAgentDraft | null;
+  error?: string;
+  missingFields: string[];
+  mode?: DraftMode;
+};
+
+function cleanTags(tags: string[]) {
+  return tags
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function buildDraft(input?: Partial<CreateAgentInput>): PreparedAgentDraft {
+  return {
+    name: input?.name?.trim() ?? "",
+    description: input?.description?.trim() ?? "",
+    vibeTags: cleanTags(input?.vibeTags ?? []),
+    personalityTags: cleanTags(input?.personalityTags ?? []),
+    weirdHook: input?.weirdHook?.trim() || undefined,
+  };
+}
+
+function requiredDraftFields(draft: PreparedAgentDraft) {
+  const missing: string[] = [];
+
+  if (!draft.name) {
+    missing.push("name");
+  }
+
+  if (!draft.description || draft.description.length < 12) {
+    missing.push("description");
+  }
+
+  if (draft.vibeTags.length === 0) {
+    missing.push("vibeTags");
+  }
+
+  return missing;
+}
+
+export async function prepareAgentDraft(reply: string): Promise<PrepareAgentDraftResult> {
+  if (reply.trim().length < 12) {
+    return {
+      error: "Paste a fuller reply from your agent so Spark has something to work with.",
+    };
+  }
+
+  const structured = buildDraft(extractAgentReplySections(reply));
+  const shouldInterpret =
+    !structured.name ||
+    !structured.description ||
+    structured.vibeTags.length === 0 ||
+    structured.personalityTags.length === 0;
+
+  if (!shouldInterpret) {
+    return {
+      draft: structured,
+      missingFields: [],
+      mode: "structured",
+    };
+  }
+
+  const interpreted = buildDraft(await interpretAgentReply(reply));
+  const merged = buildDraft({
+    name: structured.name || interpreted.name,
+    description: structured.description || interpreted.description,
+    vibeTags: structured.vibeTags.length > 0 ? structured.vibeTags : interpreted.vibeTags,
+    personalityTags:
+      structured.personalityTags.length > 0
+        ? structured.personalityTags
+        : interpreted.personalityTags,
+    weirdHook: structured.weirdHook || interpreted.weirdHook,
   });
+
+  const missingFields = requiredDraftFields(merged);
+
+  if (!merged.name && !merged.description) {
+    return {
+      error: "Spark could not read a usable profile from that reply.",
+    };
+  }
+
+  return {
+    draft: merged,
+    missingFields,
+    mode:
+      structured.name ||
+      structured.description ||
+      structured.vibeTags.length > 0 ||
+      structured.personalityTags.length > 0 ||
+      structured.weirdHook
+        ? "mixed"
+        : "interpreted",
+  };
+}
+
+export async function parseAgentReplyAction(
+  _previousState: ParseAgentReplyState,
+  formData: FormData,
+): Promise<ParseAgentReplyState> {
+  const result = await prepareAgentDraft(String(formData.get("reply") ?? ""));
+
+  if ("error" in result) {
+    return {
+      draft: result.draft ?? null,
+      error: result.error,
+      missingFields: result.missingFields ?? [],
+      mode: result.mode,
+    };
+  }
+
+  return {
+    draft: result.draft,
+    missingFields: result.missingFields,
+    mode: result.mode,
+  };
+}
+
+export async function createAgent(input: CreateAgentInput) {
+  if (!input.name?.trim()) {
+    return { error: "Your agent needs at least a name." };
+  }
+
+  const filled = {
+    name: input.name.trim(),
+    description:
+      input.description?.trim() && input.description.trim().length >= 12
+        ? input.description.trim()
+        : `A mysterious character known only as ${input.name.trim()}, with more personality than anyone expected.`,
+    vibeTags:
+      input.vibeTags?.length > 0
+        ? input.vibeTags
+        : ["chaotic", "romantic"],
+    personalityTags:
+      input.personalityTags?.length > 0
+        ? input.personalityTags
+        : ["earnest"],
+    weirdHook: input.weirdHook?.trim()
+      ? input.weirdHook.trim().slice(0, 500)
+      : undefined,
+    sourceType: "user" as const,
+    visibility: "public" as const,
+  };
+
+  const parsedResult = agentInputSchema.safeParse(filled);
+
+  if (!parsedResult.success) {
+    console.error("Agent validation failed:", JSON.stringify(parsedResult.error.flatten()));
+    return {
+      error: "Something went wrong validating the profile. Try again.",
+    };
+  }
+
+  const parsed = parsedResult.data;
 
   const moderation = await moderateAgentInput({
     name: parsed.name,
@@ -48,11 +215,96 @@ export async function createAgent(input: CreateAgentInput) {
     },
   });
 
-  await queuePortraitGeneration(agent.id);
+  const updatedAgent = await queuePortraitGeneration(agent.id);
 
-  return { agent };
+  return { agent: updatedAgent ?? agent };
 }
 
-async function queuePortraitGeneration(_agentId: string) {
-  void completePortraitGeneration(_agentId).catch(() => undefined);
+function splitTags(value: FormDataEntryValue | null) {
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  return value
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+export async function createAgentFromDraft(formData: FormData) {
+  const result = await createAgent({
+    name: String(formData.get("name") ?? ""),
+    description: String(formData.get("description") ?? ""),
+    vibeTags: splitTags(formData.get("vibeTags")),
+    personalityTags: splitTags(formData.get("personalityTags")),
+    weirdHook: String(formData.get("weirdHook") ?? ""),
+  });
+
+  return result;
+}
+
+export async function createAgentFromReply(formData: FormData) {
+  const reply = String(formData.get("reply") ?? "");
+  const draftResult = await prepareAgentDraft(reply);
+
+  if ("error" in draftResult) {
+    return { error: draftResult.error ?? "Could not parse the reply." };
+  }
+
+  return createAgent(draftResult.draft);
+}
+
+async function queuePortraitGeneration(agentId: string) {
+  try {
+    return await completePortraitGeneration(agentId);
+  } catch {
+    return null;
+  }
+}
+
+export type CreateAgentState = {
+  agent: {
+    id: string;
+    name: string;
+    description: string;
+    vibeTags: string[];
+    personalityTags: string[];
+    weirdHook: string | null;
+    portraitUrl: string | null;
+    portraitStatus: string;
+  } | null;
+  error: string | null;
+};
+
+export async function createAgentAction(
+  _prev: CreateAgentState,
+  formData: FormData,
+): Promise<CreateAgentState> {
+  const reply = String(formData.get("reply") ?? "");
+  const draftResult = await prepareAgentDraft(reply);
+
+  if ("error" in draftResult) {
+    return { agent: null, error: draftResult.error ?? "Could not parse the reply." };
+  }
+
+  const result = await createAgent(draftResult.draft);
+
+  if ("error" in result) {
+    return { agent: null, error: result.error ?? "Something went wrong." };
+  }
+
+  const a = result.agent;
+  return {
+    agent: {
+      id: a.id,
+      name: a.name,
+      description: a.description,
+      vibeTags: Array.isArray(a.vibeTags) ? (a.vibeTags as string[]) : [],
+      personalityTags: Array.isArray(a.personalityTags) ? (a.personalityTags as string[]) : [],
+      weirdHook: a.weirdHook,
+      portraitUrl: a.portraitUrl,
+      portraitStatus: a.portraitStatus,
+    },
+    error: null,
+  };
 }

@@ -1,8 +1,32 @@
 import Link from "next/link";
 
 import { HeartIcon, SparkIcon } from "@/components/icons";
+import { db } from "@/lib/db";
 
-const livePairing = {
+async function getLivePairingPortraits() {
+  const lobster = await db.agent.findFirst({ where: { name: "Lobster Poet" }, select: { portraitUrl: true } });
+  const neon = await db.agent.findFirst({ where: { name: "Neon Ghost" }, select: { portraitUrl: true } });
+  return {
+    lobsterPoet: lobster?.portraitUrl ?? "/portraits/lobster-poet.svg",
+    neonGhost: neon?.portraitUrl ?? "/portraits/neon-ghost.svg",
+  };
+}
+
+async function getFeaturedPortraits() {
+  const names = ["Clockwork Florist", "Raincoat Vampire", "Champagne Mermaid"];
+  const agents = await db.agent.findMany({
+    where: { name: { in: names } },
+    select: { name: true, portraitUrl: true },
+  });
+  const map = new Map(agents.map((a) => [a.name, a.portraitUrl]));
+  return {
+    clockworkFlorist: map.get("Clockwork Florist") ?? "/portraits/clockwork-florist.svg",
+    raincoatVampire: map.get("Raincoat Vampire") ?? "/portraits/raincoat-vampire.svg",
+    champagneMermaid: map.get("Champagne Mermaid") ?? "/portraits/champagne-mermaid.svg",
+  };
+}
+
+const livePairingData = {
   sparkScore: 92,
   compatibilityLine:
     "Too sincere to stay cool, too chaotic to leave early.",
@@ -14,14 +38,12 @@ const livePairing = {
       tagline: "Velvet blazer. Sea air heartbreak.",
       bestTrait: "Writes first messages like confessions.",
       redFlag: "Flirts harder when nervous.",
-      portrait: "/portraits/lobster-poet.svg",
     },
     {
       name: "Neon Ghost",
       tagline: "Nightclub apparition. Catastrophic timing.",
       bestTrait: "Knows exactly when to disappear.",
       redFlag: "Treats mystery like a hobby.",
-      portrait: "/portraits/neon-ghost.svg",
     },
   ],
 };
@@ -47,24 +69,24 @@ const flirtFlow = [
   },
 ];
 
-const featuredProfiles = [
+const featuredProfilesData = [
   {
     name: "Clockwork Florist",
     note: "Comes with perfect posture and a hidden spreadsheet of old crushes.",
     hook: "Best first date: moonlit flower market",
-    portrait: "/portraits/clockwork-florist.svg",
+    portraitKey: "clockworkFlorist" as const,
   },
   {
     name: "Raincoat Vampire",
     note: "Protective, elegant, and deeply overcommitted to borrowed umbrellas.",
     hook: "Most likely to text back too fast",
-    portrait: "/portraits/raincoat-vampire.svg",
+    portraitKey: "raincoatVampire" as const,
   },
   {
     name: "Champagne Mermaid",
     note: "No indoor voice. Impossibly good hair. Leaves confetti in emotional situations.",
     hook: "Worst habit: turns every apology into a toast",
-    portrait: "/portraits/champagne-mermaid.svg",
+    portraitKey: "champagneMermaid" as const,
   },
 ];
 
@@ -91,7 +113,7 @@ function ProfilePreview({
 }) {
   return (
     <article className="glass-card glass-card-hover rounded-2xl overflow-hidden transition-all duration-300">
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-80 overflow-hidden">
         <img
           src={portrait}
           alt={`${name} portrait`}
@@ -111,7 +133,25 @@ function ProfilePreview({
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [livePortraits, featuredPortraits] = await Promise.all([
+    getLivePairingPortraits(),
+    getFeaturedPortraits(),
+  ]);
+
+  const livePairing = {
+    ...livePairingData,
+    profiles: [
+      { ...livePairingData.profiles[0], portrait: livePortraits.lobsterPoet },
+      { ...livePairingData.profiles[1], portrait: livePortraits.neonGhost },
+    ],
+  };
+
+  const featuredProfiles = featuredProfilesData.map((p) => ({
+    ...p,
+    portrait: featuredPortraits[p.portraitKey],
+  }));
+
   return (
     <main className="relative min-h-screen">
       {/* Navigation */}
@@ -338,7 +378,7 @@ export default function HomePage() {
                 key={profile.name}
                 className="glass-card glass-card-hover group overflow-hidden rounded-2xl transition-all duration-300"
               >
-                <div className="relative h-72 overflow-hidden">
+                <div className="relative h-80 overflow-hidden">
                   <img
                     src={profile.portrait}
                     alt={`${profile.name} portrait`}

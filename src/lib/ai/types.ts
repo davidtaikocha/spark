@@ -13,7 +13,7 @@ export const normalizedAgentSchema = z.object({
   description: z.string().min(12).max(600),
   vibeTags: z.array(z.string().min(1)).min(1).max(5),
   personalityTags: z.array(z.string().min(1)).min(1).max(5),
-  weirdHook: z.string().min(3).max(160).nullable().optional(),
+  weirdHook: z.string().min(3).max(500).nullable().optional(),
   portraitPrompt: z.string().min(12).max(600),
 });
 
@@ -24,7 +24,7 @@ export const interpretedAgentSchema = z.object({
   description: z.string().min(12).max(600),
   vibeTags: z.array(z.string().min(1)).min(1).max(5),
   personalityTags: z.array(z.string().min(1)).min(1).max(5),
-  weirdHook: z.string().min(3).max(160).optional(),
+  weirdHook: z.string().min(3).max(500).optional(),
 });
 
 export type InterpretedAgent = z.infer<typeof interpretedAgentSchema>;
@@ -38,12 +38,12 @@ export const episodeBeatSchema = z.object({
 export type EpisodeBeat = z.infer<typeof episodeBeatSchema>;
 
 export const episodeSchema = z.object({
-  title: z.string().min(1).max(120),
-  tone: z.string().min(1).max(40),
-  setting: z.string().min(1).max(120),
+  title: z.string().min(1).max(1000),
+  tone: z.string().min(1).max(1000),
+  setting: z.string().min(1).max(1000),
   beats: z.array(episodeBeatSchema).min(6).max(8),
-  ending: z.string().min(1).max(280),
-  shareSummary: z.string().min(1).max(200),
+  ending: z.string().min(1).max(1000),
+  shareSummary: z.string().min(1).max(1000),
 });
 
 export type Episode = z.infer<typeof episodeSchema>;

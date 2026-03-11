@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 
 import { PrismaClient } from "@prisma/client";
@@ -7,245 +7,6 @@ const prisma = new PrismaClient();
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
-}
-
-function loadPortraitDataUri(agentName: string): string {
-  const slug = toSlug(agentName);
-  const filePath = path.join(process.cwd(), "public", "portraits", `${slug}.svg`);
-  const svg = readFileSync(filePath, "utf8");
-  return `data:image/svg+xml;base64,${Buffer.from(svg, "utf8").toString("base64")}`;
-}
-
-// ---------------------------------------------------------------------------
-// Comic SVG Builder
-// ---------------------------------------------------------------------------
-
-const PAGE_W = 640;
-const PAGE_H = 960;
-const M = 15;
-const CW = PAGE_W - 2 * M;
-const GAP = 8;
-const HW = Math.floor((CW - GAP) / 2);
-
-const PANELS = [
-  { x: M, y: 58, w: CW, h: 175 },
-  { x: M, y: 241, w: HW, h: 155 },
-  { x: M + HW + GAP, y: 241, w: HW, h: 155 },
-  { x: M, y: 404, w: HW, h: 155 },
-  { x: M + HW + GAP, y: 404, w: HW, h: 155 },
-  { x: M, y: 567, w: CW, h: 175 },
-];
-
-function esc(str: string) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-function wrapText(text: string, maxChars: number): string[] {
-  const words = text.split(" ");
-  const lines: string[] = [];
-  let cur = "";
-  for (const w of words) {
-    if (cur.length + w.length + 1 > maxChars) {
-      if (cur) lines.push(cur);
-      cur = w;
-    } else {
-      cur = cur ? `${cur} ${w}` : w;
-    }
-  }
-  if (cur) lines.push(cur);
-  return lines.slice(0, 3);
-}
-
-function speechBubble(
-  text: string,
-  cx: number,
-  cy: number,
-  tailX: number,
-  tailY: number,
-  speaker: "A" | "B" | "narration",
-  panelW: number,
-) {
-  const maxChars = panelW > 400 ? 36 : 22;
-  const lines = wrapText(text, maxChars);
-  const lineH = 15;
-  const pad = 10;
-  const bw = Math.min(panelW * 0.65, maxChars * 7 + 2 * pad);
-  const bh = lines.length * lineH + 2 * pad;
-  const bx = cx - bw / 2;
-  const by = cy;
-  const textLines = lines
-    .map(
-      (line, i) =>
-        `<text x="${cx}" y="${by + pad + 12 + i * lineH}" text-anchor="middle" fill="${speaker === "narration" ? "#78350f" : "#222"}" font-size="10.5" font-family="${speaker === "narration" ? "Georgia, serif" : "'Comic Sans MS', 'Chalkboard SE', cursive"}"${speaker === "narration" ? ' font-style="italic"' : ""}>${esc(line)}</text>`,
-    )
-    .join("\n");
-
-  if (speaker === "narration") {
-    return `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="3" fill="#fef3c7" stroke="#92400e" stroke-width="1.2"/>
-${textLines}`;
-  }
-
-  return `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="12" fill="white" stroke="#333" stroke-width="1.5"/>
-<polygon points="${tailX - 5},${by + bh - 1} ${tailX + 5},${by + bh - 1} ${tailX},${tailY}" fill="white" stroke="#333" stroke-width="1.5"/>
-<rect x="${tailX - 6}" y="${by + bh - 3}" width="12" height="5" fill="white"/>
-${textLines}`;
-}
-
-function narrationLabel(label: string, x: number, y: number) {
-  const w = label.length * 8 + 16;
-  return `<rect x="${x}" y="${y}" width="${w}" height="20" rx="2" fill="#fbbf24" stroke="#92400e" stroke-width="1"/>
-<text x="${x + w / 2}" y="${y + 14}" text-anchor="middle" fill="#78350f" font-size="9" font-weight="bold" font-family="Georgia, serif">${esc(label.toUpperCase())}</text>`;
-}
-
-function sfxText(text: string, x: number, y: number, color: string, rot = 0) {
-  const tr = rot ? ` transform="rotate(${rot}, ${x}, ${y})"` : "";
-  return `<text x="${x}" y="${y}" fill="${color}" font-size="18" font-weight="bold" font-family="Impact, sans-serif" text-anchor="middle" opacity="0.85"${tr}>${esc(text)}</text>`;
-}
-
-/** Render a portrait <image> clipped to a circle, with optional horizontal flip */
-function portraitInCircle(
-  dataUri: string,
-  cx: number,
-  cy: number,
-  r: number,
-  clipId: string,
-  flip = false,
-) {
-  // Portrait SVGs are 640x768 (5:6 ratio). We want the face area (upper ~60%)
-  // to be visible inside the circle. Size the image so width = 2*r * 1.4.
-  const imgW = r * 2.8;
-  const imgH = imgW * (768 / 640);
-  const imgX = cx - imgW / 2;
-  const imgY = cy - r * 0.7; // shift up to show face/upper body
-
-  const flipTransform = flip
-    ? ` transform="translate(${2 * cx}, 0) scale(-1, 1)"`
-    : "";
-
-  return `<clipPath id="${clipId}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
-<circle cx="${cx}" cy="${cy}" r="${r + 2}" fill="rgba(0,0,0,0.4)" stroke="#222" stroke-width="2.5"/>
-<g clip-path="url(#${clipId})"${flipTransform}>
-  <image href="${dataUri}" x="${imgX}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMin slice"/>
-</g>
-<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#222" stroke-width="2.5"/>`;
-}
-
-type BeatData = {
-  label: string;
-  dialogue: string;
-  speaker: "A" | "B" | "narration";
-  sfx?: string;
-  sfxColor?: string;
-};
-
-type Palette = {
-  page: string;
-  title: string;
-  titleText: string;
-  panels: string[];
-  accent: string;
-};
-
-type Portraits = { a: string; b: string };
-
-function buildComicSvg(
-  title: string,
-  agentA: string,
-  agentB: string,
-  beats: BeatData[],
-  palette: Palette,
-  portraits: Portraits,
-) {
-  // Each panel gets unique clip-path IDs
-  let clipCounter = 0;
-  const nextClipId = () => `pc${++clipCounter}`;
-
-  const defs = `<defs>
-  <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse">
-    <circle cx="3" cy="3" r="0.7" fill="rgba(0,0,0,0.1)"/>
-  </pattern>
-  <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-    <line x1="0" y1="0" x2="0" y2="4" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-  </pattern>
-</defs>`;
-
-  const titleBanner = `<rect x="0" y="0" width="${PAGE_W}" height="52" fill="${palette.title}"/>
-<rect x="0" y="0" width="${PAGE_W}" height="52" fill="url(#dots)" opacity="0.5"/>
-<rect x="0" y="48" width="${PAGE_W}" height="4" fill="rgba(0,0,0,0.3)"/>
-<text x="${PAGE_W / 2}" y="34" text-anchor="middle" fill="${palette.titleText}" font-size="19" font-weight="bold" font-family="Impact, 'Arial Black', sans-serif" letter-spacing="2">${esc(title.toUpperCase())}</text>`;
-
-  const panelsSvg = beats.slice(0, 6).map((beat, i) => {
-    const p = PANELS[i];
-    const bg = palette.panels[i % palette.panels.length];
-    const isWide = p.w > 400;
-    const parts: string[] = [];
-
-    // Panel background + clip for contents
-    parts.push(`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="3" fill="${bg}" stroke="#111" stroke-width="3.5"/>`);
-    parts.push(`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="3" fill="url(#dots)" opacity="0.2"/>`);
-
-    // Portrait sizes — smaller for narrow panels
-    const portraitR = isWide ? 48 : 36;
-
-    // Character positions — agent A on left, agent B mirrored on right
-    const aX = p.x + (isWide ? portraitR + 15 : portraitR + 8);
-    const bX = p.x + p.w - (isWide ? portraitR + 15 : portraitR + 8);
-    const charY = p.y + p.h - portraitR - 8;
-
-    // Both characters appear in every panel, facing each other
-    parts.push(portraitInCircle(portraits.a, aX, charY, portraitR, nextClipId(), false));
-    parts.push(portraitInCircle(portraits.b, bX, charY, portraitR, nextClipId(), true));
-
-    // Character name labels under portraits
-    parts.push(
-      `<text x="${aX}" y="${p.y + p.h - 4}" text-anchor="middle" fill="${palette.accent}" font-size="7" font-weight="bold" font-family="'Courier New', monospace" letter-spacing="1" opacity="0.8">${esc(agentA.split(" ")[0].toUpperCase())}</text>`,
-    );
-    parts.push(
-      `<text x="${bX}" y="${p.y + p.h - 4}" text-anchor="middle" fill="${palette.accent}" font-size="7" font-weight="bold" font-family="'Courier New', monospace" letter-spacing="1" opacity="0.8">${esc(agentB.split(" ")[0].toUpperCase())}</text>`,
-    );
-
-    // Narration label (top-left corner)
-    parts.push(narrationLabel(beat.label, p.x + 7, p.y + 7));
-
-    // Speech bubble — positioned above the speaker's portrait
-    if (beat.speaker === "A") {
-      const bubbleCx = aX + (isWide ? 40 : 20);
-      parts.push(speechBubble(beat.dialogue, bubbleCx, p.y + 8 + 20, aX, charY - portraitR, "A", p.w));
-    } else if (beat.speaker === "B") {
-      const bubbleCx = bX - (isWide ? 40 : 20);
-      parts.push(speechBubble(beat.dialogue, bubbleCx, p.y + 8 + 20, bX, charY - portraitR, "B", p.w));
-    } else {
-      // Narration — centered between the two characters
-      const narCx = p.x + p.w / 2;
-      parts.push(speechBubble(beat.dialogue, narCx, p.y + 8 + 20, narCx, charY - portraitR, "narration", p.w));
-    }
-
-    // SFX
-    if (beat.sfx) {
-      const sx = p.x + p.w / 2;
-      const sy = p.y + p.h * 0.45;
-      parts.push(sfxText(beat.sfx, sx, sy, beat.sfxColor ?? "#ff6b6b", -10));
-    }
-
-    return `<g>\n${parts.join("\n")}\n</g>`;
-  });
-
-  const footerY = PANELS[5].y + PANELS[5].h + 30;
-  const footer = `<text x="${PAGE_W / 2}" y="${footerY}" text-anchor="middle" fill="${palette.accent}" font-size="10" font-family="Georgia, serif" letter-spacing="2.5" opacity="0.7">${esc(agentA.toUpperCase())}  &amp;  ${esc(agentB.toUpperCase())}</text>
-<text x="${PAGE_W / 2}" y="${footerY + 32}" text-anchor="middle" fill="rgba(255,255,255,0.18)" font-size="26" font-weight="bold" font-family="Impact, sans-serif" letter-spacing="6">THE END</text>`;
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${PAGE_W}" height="${PAGE_H}" viewBox="0 0 ${PAGE_W} ${PAGE_H}">
-${defs}
-<rect width="${PAGE_W}" height="${PAGE_H}" fill="${palette.page}"/>
-<rect width="${PAGE_W}" height="${PAGE_H}" fill="url(#scanlines)"/>
-${titleBanner}
-${panelsSvg.join("\n")}
-${footer}
-</svg>`;
-}
-
-function comicToDataUri(svg: string) {
-  return `data:image/svg+xml;base64,${Buffer.from(svg, "utf8").toString("base64")}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -356,21 +117,6 @@ const seedEpisodes = [
     ],
     ending: "They exchange journal entries instead of phone numbers.",
     shareSummary: "Lobster Poet and Neon Ghost had a bittersweet oyster bar date full of tears, glitter, and surprisingly deep journal talk.",
-    dialogue: [
-      { label: "Arrival", dialogue: "Mirror, mirror... am I early enough to rehearse twice?", speaker: "A" as const, sfx: "POOF!", sfxColor: "#a78bfa" },
-      { label: "Spark", dialogue: "It's obviously the Kumamoto. It carries an oceanic melancholy.", speaker: "B" as const },
-      { label: "Spiral", dialogue: "Is that... is that smooth jazz?!", speaker: "A" as const, sfx: "JAZZ", sfxColor: "#60a5fa" },
-      { label: "Confession", dialogue: "I've never actually tasted anything. Not once.", speaker: "B" as const },
-      { label: "Recovery", dialogue: "My journal's all waterlogged sonnets. Yours?", speaker: "A" as const },
-      { label: "Finale", dialogue: "Neither looked back. Both smiled.", speaker: "narration" as const, sfx: "drip drip", sfxColor: "#93c5fd" },
-    ],
-    palette: {
-      page: "#0f172a",
-      title: "#7c2d12",
-      titleText: "#fef3c7",
-      panels: ["#1e3a5f", "#1a3550", "#2d1b4e", "#1b3a4b", "#1e2d4a", "#162035"],
-      accent: "#fbbf24",
-    },
   },
   {
     agentA: "Volcanic Pastry Chef",
@@ -388,21 +134,6 @@ const seedEpisodes = [
     ],
     ending: "Florist sends a follow-up invoice: 'Second date consultation — no charge.'",
     shareSummary: "Volcanic Pastry Chef and Clockwork Florist turned a midnight market into a fire-and-flowers disaster that somehow ended tenderly.",
-    dialogue: [
-      { label: "Arrival", dialogue: "STAND BACK. Art is incoming and it is ON FIRE.", speaker: "A" as const, sfx: "FWOOSH!", sfxColor: "#f97316" },
-      { label: "Spark", dialogue: "The caramelization angle is all wrong for a waning gibbous.", speaker: "B" as const },
-      { label: "Spiral", dialogue: "They both stomp in synchronized panic.", speaker: "narration" as const, sfx: "STOMP!", sfxColor: "#ef4444" },
-      { label: "Confession", dialogue: "1x feelings I can't say out loud. Total: everything.", speaker: "B" as const },
-      { label: "Recovery", dialogue: "It's structurally unsound but emotionally devastating.", speaker: "A" as const, sfx: "*clap*", sfxColor: "#a3e635" },
-      { label: "Finale", dialogue: "No fire. No moon check. Just this.", speaker: "narration" as const },
-    ],
-    palette: {
-      page: "#1a0f0a",
-      title: "#b91c1c",
-      titleText: "#fff7ed",
-      panels: ["#4a2010", "#2d3a1a", "#3d1a0a", "#1a3020", "#3a2515", "#1f1510"],
-      accent: "#fb923c",
-    },
   },
   {
     agentA: "Champagne Mermaid",
@@ -420,21 +151,6 @@ const seedEpisodes = [
     ],
     ending: "They stay until the first morning train and ride it nowhere in particular.",
     shareSummary: "Champagne Mermaid and Midnight Train Conductor had a swooning platform romance involving secret timetable love letters and confetti everywhere.",
-    dialogue: [
-      { label: "Arrival", dialogue: "I'M HEEERE! Did anyone order sparkle?!", speaker: "A" as const, sfx: "POP!", sfxColor: "#f9a8d4" },
-      { label: "Spark", dialogue: "Now arriving on platform 3... the most radiant being in transit.", speaker: "B" as const },
-      { label: "Spiral", dialogue: "The TIMETABLES are SACRED!", speaker: "B" as const, sfx: "SPLASH!", sfxColor: "#38bdf8" },
-      { label: "Confession", dialogue: "The departure board spelled it out: I HOPED YOU'D COME.", speaker: "narration" as const },
-      { label: "Recovery", dialogue: "They danced to the sound of a distant train horn.", speaker: "narration" as const, sfx: "click-clack", sfxColor: "#c4b5fd" },
-      { label: "Finale", dialogue: "Neither boards. They split the last glass and watch the taillights fade.", speaker: "narration" as const },
-    ],
-    palette: {
-      page: "#0c0a1a",
-      title: "#7e22ce",
-      titleText: "#f5f3ff",
-      panels: ["#1e1145", "#2a1250", "#1a1040", "#251348", "#1c1042", "#150e35"],
-      accent: "#e9d5ff",
-    },
   },
 ];
 
@@ -453,7 +169,7 @@ async function main() {
       sourceType: "house",
       visibility: "public",
       portraitStatus: "ready",
-      portraitUrl: `/portraits/${toSlug(agent.name)}.svg`,
+      portraitUrl: `/portraits/${toSlug(agent.name)}.png`,
     })),
   });
 
@@ -477,9 +193,9 @@ async function main() {
       },
     });
 
-    const portraitA = loadPortraitDataUri(ep.agentA);
-    const portraitB = loadPortraitDataUri(ep.agentB);
-    const comicSvg = buildComicSvg(ep.title, ep.agentA, ep.agentB, ep.dialogue, ep.palette, { a: portraitA, b: portraitB });
+    const comicSlug = toSlug(ep.title);
+    const comicPath = path.join(process.cwd(), "public", "comics", `${comicSlug}.png`);
+    const comicExists = existsSync(comicPath);
 
     await prisma.episode.create({
       data: {
@@ -491,8 +207,8 @@ async function main() {
         ending: ep.ending,
         shareSummary: ep.shareSummary,
         status: "ready",
-        comicStatus: "ready",
-        comicUrl: comicToDataUri(comicSvg),
+        comicStatus: comicExists ? "ready" : "pending",
+        comicUrl: comicExists ? `/comics/${comicSlug}.png` : null,
       },
     });
   }

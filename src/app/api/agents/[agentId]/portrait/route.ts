@@ -1,3 +1,6 @@
+import { writeFileSync } from "node:fs";
+import path from "node:path";
+
 import { NextResponse } from "next/server";
 
 import { generatePortrait } from "@/lib/ai/generate-portrait";
@@ -25,12 +28,17 @@ export async function completePortraitGeneration(agentId: string) {
       weirdHook: agent.weirdHook,
     });
 
+    const slug = agent.name.toLowerCase().replace(/\s+/g, "-");
+    const fileName = `${slug}.png`;
+    const filePath = path.join(process.cwd(), "public", "portraits", fileName);
+    writeFileSync(filePath, Buffer.from(portrait.image.base64, "base64"));
+
     return await db.agent.update({
       where: { id: agentId },
       data: {
         portraitPrompt: portrait.prompt,
         portraitStatus: "ready",
-        portraitUrl: `data:${portrait.image.mediaType};base64,${portrait.image.base64}`,
+        portraitUrl: `/portraits/${fileName}`,
       },
     });
   } catch (error) {

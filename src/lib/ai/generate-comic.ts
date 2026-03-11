@@ -13,22 +13,25 @@ export async function generateComicPage(
     return mockGenerateComicPage(input);
   }
 
-  const prompt = buildComicPrompt(input);
+  const promptText = buildComicPrompt(input);
+  const referenceImages = [portraits.agentA, portraits.agentB].filter(
+    (buf) => buf.length > 0,
+  );
+
+  const prompt =
+    referenceImages.length > 0
+      ? { text: promptText, images: referenceImages }
+      : promptText;
+
   const { image } = await generateImage({
     model: getImageModel(),
-    prompt: {
-      images: [portraits.agentA, portraits.agentB],
-      text: prompt,
-    },
-    size: "1024x1536" as `${number}x${number}`,
+    prompt,
+    size: "1024x1536",
   });
 
   return {
-    image: {
-      base64: image.base64,
-      mediaType: image.mediaType,
-    },
-    prompt,
+    image: { base64: image.base64, mediaType: image.mediaType ?? "image/png" },
+    prompt: promptText,
     model: getImageModelId(),
   };
 }

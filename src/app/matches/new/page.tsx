@@ -1,10 +1,9 @@
-import { redirect } from "next/navigation";
-
 import { AgentCard } from "@/components/agent-card";
+import { AgentSwitcher } from "@/components/agent-switcher";
 import { NavHeader } from "@/components/nav-header";
 import { RecommendationList } from "@/components/recommendation-list";
 
-import { createEpisodeFromRecommendation, getRecommendedMatches } from "../actions";
+import { generateEpisodeAction, getRecommendedMatches } from "../actions";
 
 type MatchPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -15,20 +14,12 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
   const agentId = typeof params.agentId === "string" ? params.agentId : undefined;
   const { primaryAgent, recommendations } = await getRecommendedMatches(agentId);
 
-  async function handleGenerateEpisode(formData: FormData) {
-    "use server";
-
-    const result = await createEpisodeFromRecommendation({
-      agentAId: String(formData.get("agentAId") ?? ""),
-      agentBId: String(formData.get("agentBId") ?? ""),
-      reason: String(formData.get("reason") ?? ""),
-      chemistryScore: Number(formData.get("chemistryScore") ?? 0),
-      contrastScore: Number(formData.get("contrastScore") ?? 0),
-      storyabilityScore: Number(formData.get("storyabilityScore") ?? 0),
-    });
-
-    redirect(`/episodes/${result.episodeId}`);
-  }
+  const allAgents = primaryAgent
+    ? [
+        { id: primaryAgent.id, name: primaryAgent.name, portraitUrl: primaryAgent.portraitUrl },
+        ...recommendations.map((r) => ({ id: r.agentId, name: r.name, portraitUrl: r.portraitUrl })),
+      ]
+    : [];
 
   return (
     <main className="relative min-h-screen">
@@ -47,7 +38,11 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
 
         {primaryAgent ? (
           <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <AgentCard {...primaryAgent} />
+            <div className="space-y-4">
+              <AgentCard {...primaryAgent} />
+              <AgentSwitcher agents={allAgents} activeId={primaryAgent.id} />
+            </div>
+
             <section className="space-y-4">
               <div>
                 <p className="font-display text-3xl tracking-tight text-ink">
@@ -61,7 +56,7 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
               <RecommendationList
                 primaryAgentId={primaryAgent.id}
                 items={recommendations}
-                action={handleGenerateEpisode}
+                action={generateEpisodeAction}
               />
             </section>
           </div>

@@ -14,7 +14,11 @@ function toTagList(value: unknown) {
 }
 
 async function queueComicGeneration(episodeId: string) {
-  void completeComicGeneration(episodeId).catch(() => undefined);
+  try {
+    return await completeComicGeneration(episodeId);
+  } catch {
+    return null;
+  }
 }
 
 export async function generateEpisodeForMatch(matchId: string) {
@@ -75,10 +79,10 @@ export async function generateEpisodeForMatch(matchId: string) {
     },
   });
 
-  await queueComicGeneration(createdEpisode.id);
+  const updatedEpisode = await queueComicGeneration(createdEpisode.id);
 
   return {
-    ...createdEpisode,
+    ...(updatedEpisode ?? createdEpisode),
     beats: episode.beats,
     shareSummary: episode.shareSummary,
   };

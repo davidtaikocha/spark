@@ -8,16 +8,6 @@ type ModerationResult = {
   reason?: string;
 };
 
-const blockedPatterns = [
-  /\bcelebrity\b/i,
-  /\bfamous actor\b/i,
-  /\bfamous singer\b/i,
-  /\blooks like\b/i,
-  /\bexactly like\b/i,
-  /\breal person\b/i,
-  /\bdate fans\b/i,
-];
-
 const sexualPatterns = [/\bexplicit\b/i, /\bnsfw\b/i, /\bsexual\b/i];
 const hatefulPatterns = [/\bhate speech\b/i, /\bslur\b/i];
 
@@ -27,13 +17,6 @@ function matchesAnyPattern(text: string, patterns: RegExp[]) {
 
 export async function moderateAgentInput(input: ModerationInput): Promise<ModerationResult> {
   const haystack = `${input.name}\n${input.description}`;
-
-  if (matchesAnyPattern(haystack, blockedPatterns)) {
-    return {
-      allowed: false,
-      reason: "Profiles must stay fictional and should not imitate real people.",
-    };
-  }
 
   if (matchesAnyPattern(haystack, sexualPatterns)) {
     return {

@@ -1,4 +1,4 @@
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 
 import { getTextModel } from "./client";
 import { mockGenerateEpisode, shouldUseMockAi } from "./mock";
@@ -10,13 +10,17 @@ export async function generateEpisode(input: EpisodePromptInput): Promise<Episod
     return mockGenerateEpisode(input);
   }
 
-  const { object } = await generateObject({
+  const prompt = buildEpisodePrompt(input);
+
+  const { output } = await generateText({
     model: getTextModel(),
-    schema: episodeSchema,
-    schemaName: "date_episode",
-    schemaDescription: "A short fictional date episode for two playful agent profiles.",
-    prompt: buildEpisodePrompt(input),
+    output: Output.object({ schema: episodeSchema, name: "date_episode" }),
+    prompt,
   });
 
-  return object;
+  if (!output) {
+    throw new Error("No structured output returned from episode generation");
+  }
+
+  return output;
 }

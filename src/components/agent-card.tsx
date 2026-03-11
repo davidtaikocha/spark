@@ -60,7 +60,7 @@ export function AgentCard({
           <img
             src={portraitUrl}
             alt={`${name} portrait`}
-            className="h-72 w-full object-cover object-top"
+            className="h-80 w-full object-cover object-top"
           />
         ) : (
           <div className="flex items-center justify-center bg-gradient-to-br from-rose/10 via-surface to-accent/5 px-4 py-12">

@@ -1,3 +1,5 @@
+"use server";
+
 import { generateEpisodeForMatch } from "@/app/episodes/actions";
 import { db } from "@/lib/db";
 import { scoreMatch } from "@/lib/matching/score-match";
@@ -16,8 +18,7 @@ export async function getRecommendedMatches(agentId?: string) {
       visibility: "public",
     },
     orderBy: [
-      { sourceType: "asc" },
-      { createdAt: "asc" },
+      { createdAt: "desc" },
     ],
     take: 24,
   });
@@ -55,6 +56,7 @@ export async function getRecommendedMatches(agentId?: string) {
         agentId: agent.id,
         name: agent.name,
         description: agent.description,
+        portraitUrl: agent.portraitUrl ?? undefined,
         chemistryScore: score.chemistryScore,
         contrastScore: score.contrastScore,
         storyabilityScore: score.storyabilityScore,
@@ -62,7 +64,7 @@ export async function getRecommendedMatches(agentId?: string) {
       };
     })
     .sort((left, right) => right.storyabilityScore - left.storyabilityScore)
-    .slice(0, 6);
+;
 
   return {
     primaryAgent: {
@@ -106,4 +108,58 @@ export async function createEpisodeFromRecommendation(input: CreateEpisodeFromRe
   return {
     episodeId: episode.id,
   };
+}
+
+export type GenerateEpisodeState = {
+  episode: {
+    id: string;
+    title: string;
+    tone: string;
+    shareSummary: string;
+    comicUrl: string | null;
+    comicStatus: string;
+    agentAName: string;
+    agentBName: string;
+  } | null;
+  error: string | null;
+};
+
+export async function generateEpisodeAction(
+  _prev: GenerateEpisodeState,
+  formData: FormData,
+): Promise<GenerateEpisodeState> {
+  try {
+    const result = await createEpisodeFromRecommendation({
+      agentAId: String(formData.get("agentAId") ?? ""),
+      agentBId: String(formData.get("agentBId") ?? ""),
+      reason: String(formData.get("reason") ?? ""),
+      chemistryScore: Number(formData.get("chemistryScore") ?? 0),
+      contrastScore: Number(formData.get("contrastScore") ?? 0),
+      storyabilityScore: Number(formData.get("storyabilityScore") ?? 0),
+    });
+
+    const episode = await db.episode.findUniqueOrThrow({
+      where: { id: result.episodeId },
+      include: { match: { include: { agentA: true, agentB: true } } },
+    });
+
+    return {
+      episode: {
+        id: episode.id,
+        title: episode.title,
+        tone: episode.tone,
+        shareSummary: episode.shareSummary ?? "",
+        comicUrl: episode.comicUrl,
+        comicStatus: episode.comicStatus,
+        agentAName: episode.match.agentA.name,
+        agentBName: episode.match.agentB.name,
+      },
+      error: null,
+    };
+  } catch (error) {
+    return {
+      episode: null,
+      error: error instanceof Error ? error.message : "Something went wrong generating the episode.",
+    };
+  }
 }

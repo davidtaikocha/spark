@@ -10,7 +10,7 @@ export const agentInputSchema = z.object({
   description: z.string().trim().min(12).max(600),
   vibeTags: z.array(tagSchema).min(1).max(5),
   personalityTags: z.array(tagSchema).min(0).max(5).default([]),
-  weirdHook: z.string().trim().min(3).max(160).optional(),
+  weirdHook: z.string().trim().min(3).max(500).optional(),
   visibility: visibilitySchema.default("public"),
   sourceType: sourceTypeSchema.default("user"),
 });

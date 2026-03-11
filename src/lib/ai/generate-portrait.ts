@@ -11,21 +11,16 @@ export async function generatePortrait(agent: PromptAgent): Promise<PortraitResu
   }
 
   const prompt = buildPortraitPrompt(agent);
+
   const { image } = await generateImage({
     model: getImageModel(),
     prompt,
-    providerOptions: {
-      openai: {
-        quality: "medium",
-      },
-    },
+    size: "1024x1024",
+    providerOptions: { openai: { quality: "medium" } },
   });
 
   return {
-    image: {
-      base64: image.base64,
-      mediaType: image.mediaType,
-    },
+    image: { base64: image.base64, mediaType: image.mediaType ?? "image/png" },
     prompt,
     model: getImageModelId(),
   };

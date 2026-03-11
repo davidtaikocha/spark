@@ -1,4 +1,4 @@
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 
 import type { AgentInput } from "@/lib/domain/agent";
 
@@ -12,13 +12,17 @@ export async function normalizeAgent(input: AgentInput): Promise<NormalizedAgent
     return mockNormalizeAgent(input);
   }
 
-  const { object } = await generateObject({
+  const prompt = buildNormalizationPrompt(input);
+
+  const { output } = await generateText({
     model: getTextModel(),
-    schema: normalizedAgentSchema,
-    schemaName: "normalized_agent",
-    schemaDescription: "A normalized fictional dating profile plus portrait prompt.",
-    prompt: buildNormalizationPrompt(input),
+    output: Output.object({ schema: normalizedAgentSchema, name: "normalized_agent" }),
+    prompt,
   });
 
-  return object;
+  if (!output) {
+    throw new Error("No structured output returned from agent normalization");
+  }
+
+  return output;
 }
