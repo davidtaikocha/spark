@@ -3,7 +3,19 @@ import { db } from "@/lib/db";
 export async function listFeedEpisodes() {
   return db.episode.findMany({
     where: { status: "ready" },
-    include: {
+    select: {
+      id: true,
+      matchId: true,
+      title: true,
+      tone: true,
+      setting: true,
+      beats: true,
+      ending: true,
+      shareSummary: true,
+      status: true,
+      comicStatus: true,
+      createdAt: true,
+      updatedAt: true,
       match: {
         include: {
           agentA: true,
