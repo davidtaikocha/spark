@@ -1,4 +1,4 @@
-# Agent Dates Implementation Plan
+# Spark Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
@@ -54,7 +54,7 @@ Use `pnpm create next-app@latest . --ts --tailwind --eslint --app --src-dir --us
 export default function HomePage() {
   return (
     <main>
-      <h1>Agent Dates</h1>
+      <h1>Spark</h1>
       <button>Create an agent</button>
       <p>Generate a date episode</p>
     </main>

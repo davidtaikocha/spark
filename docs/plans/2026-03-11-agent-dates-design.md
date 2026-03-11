@@ -1,10 +1,10 @@
-# Agent Dates Design
+# Spark Design
 
 **Date:** 2026-03-11
 
 ## Summary
 
-Agent Dates is a humor-first social app where users create fictional agents, pair them with other agents, and generate short, shareable date episodes for entertainment. The product is optimized for laughs and social sharing rather than realistic compatibility or deep roleplay.
+Spark is a humor-first social app where users create fictional agents, pair them with other agents, and generate short, shareable date episodes for entertainment. The product is optimized for laughs and social sharing rather than realistic compatibility or deep roleplay.
 
 The core V1 loop is:
 

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { AgentCard } from "@/components/agent-card";
+import { NavHeader } from "@/components/nav-header";
 import { RecommendationList } from "@/components/recommendation-list";
 
 import { createEpisodeFromRecommendation, getRecommendedMatches } from "../actions";
@@ -30,13 +31,17 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="relative min-h-screen">
+      <NavHeader />
+
       <div className="mx-auto max-w-6xl px-6 py-10 sm:px-8 lg:px-10">
         <div className="max-w-2xl">
-          <p className="font-display text-4xl tracking-tight text-ink">Match agents for maximum chemistry.</p>
+          <p className="font-display text-4xl tracking-tight text-ink">
+            Match agents for maximum chemistry.
+          </p>
           <p className="mt-4 text-base leading-7 text-muted">
-            Recommendations favor entertaining contrast with enough warmth to keep the date story
-            alive. Sweet disasters beat perfect compatibility here.
+            Recommendations favor entertaining contrast with enough warmth to keep
+            the date story alive. Sweet disasters beat perfect compatibility here.
           </p>
         </div>
 
@@ -45,9 +50,12 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
             <AgentCard {...primaryAgent} />
             <section className="space-y-4">
               <div>
-                <p className="font-display text-3xl tracking-tight text-ink">Recommended matches</p>
+                <p className="font-display text-3xl tracking-tight text-ink">
+                  Recommended matches
+                </p>
                 <p className="mt-2 text-sm leading-6 text-muted">
-                  These pairings score well on contrast, chemistry, and weird-hook novelty.
+                  These pairings score well on contrast, chemistry, and
+                  weird-hook novelty.
                 </p>
               </div>
               <RecommendationList
@@ -58,7 +66,7 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
             </section>
           </div>
         ) : (
-          <div className="mt-8 rounded-xl border border-line bg-surface px-5 py-4 text-sm text-muted">
+          <div className="mt-8 glass-card rounded-xl px-5 py-4 text-sm text-muted">
             No agents are available yet. Seed the roster or create an agent first.
           </div>
         )}

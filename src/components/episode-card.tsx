@@ -26,32 +26,42 @@ export function EpisodeCard({
   agentNames = [],
 }: EpisodeCardProps) {
   return (
-    <article className="rounded-xl border border-line bg-surface p-6">
+    <article className="glass-card glass-card-hover rounded-2xl p-6 transition-all duration-300">
       <div className="flex flex-wrap items-center gap-3">
-        <p className="font-display text-4xl tracking-tight text-ink">{title}</p>
-        <span className="rounded-md border border-line bg-background px-2.5 py-1 text-xs font-medium text-muted">
+        <p className="font-display text-3xl tracking-tight text-ink sm:text-4xl">
+          {title}
+        </p>
+        <span className="rounded-lg border border-line bg-surface-raised/40 px-2.5 py-1 text-xs font-medium text-muted">
           {tone}
         </span>
       </div>
 
       {agentNames.length > 0 ? (
-        <p className="mt-3 text-sm text-muted">{agentNames.join(" and ")}</p>
+        <p className="mt-3 text-sm text-rose/70">
+          {agentNames.join(" & ")}
+        </p>
       ) : null}
 
-      <p className="mt-4 text-base leading-7 text-[#6f4638]">{shareSummary}</p>
+      <p className="mt-4 text-base leading-7 text-accent/80">
+        {shareSummary}
+      </p>
 
-      <div className="mt-5 rounded-xl border border-line bg-background px-4 py-4">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Setting</p>
-        <p className="mt-2 text-sm leading-6 text-ink">{setting}</p>
+      <div className="mt-5 rounded-xl border border-line bg-surface-raised/30 px-4 py-4">
+        <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
+          Setting
+        </p>
+        <p className="mt-2 text-sm leading-6 text-ink/80">{setting}</p>
       </div>
 
       <div className="mt-5">
         <EpisodeBeatList beats={beats} />
       </div>
 
-      <div className="mt-5 rounded-xl border border-line bg-background px-4 py-4">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Ending</p>
-        <p className="mt-2 text-sm leading-6 text-ink">{ending}</p>
+      <div className="mt-5 rounded-xl border border-rose/15 bg-rose/5 px-4 py-4">
+        <p className="text-xs font-medium uppercase tracking-widest text-rose/60">
+          Ending
+        </p>
+        <p className="mt-2 text-sm leading-6 text-ink/80">{ending}</p>
       </div>
     </article>
   );

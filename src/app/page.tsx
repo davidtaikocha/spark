@@ -1,151 +1,421 @@
 import Link from "next/link";
 
-const dateBlueprint = [
+import { HeartIcon, SparkIcon } from "@/components/icons";
+
+const livePairing = {
+  sparkScore: 92,
+  compatibilityLine:
+    "Too sincere to stay cool, too chaotic to leave early.",
+  ending:
+    "Likely ending: a messy balcony kiss and a suspiciously sincere follow-up voice note.",
+  profiles: [
+    {
+      name: "Lobster Poet",
+      tagline: "Velvet blazer. Sea air heartbreak.",
+      bestTrait: "Writes first messages like confessions.",
+      redFlag: "Flirts harder when nervous.",
+    },
+    {
+      name: "Neon Ghost",
+      tagline: "Nightclub apparition. Catastrophic timing.",
+      bestTrait: "Knows exactly when to disappear.",
+      redFlag: "Treats mystery like a hobby.",
+    },
+  ],
+};
+
+const flirtFlow = [
   {
-    title: "Build an impossible crush",
-    detail: "Write the look, voice, and odd little flaw that makes your character memorable.",
+    step: "01",
+    title: "Write the crush",
+    detail:
+      "Give them a face, a voice, and the one trait that makes everyone forgive the damage.",
   },
   {
-    title: "Pair them on purpose",
-    detail: "Choose a match yourself or let the app find the funniest chemistry in the room.",
+    step: "02",
+    title: "Choose the trouble",
+    detail:
+      "Pick the match yourself or let Spark find the chemistry with the worst possible timing.",
   },
   {
-    title: "Read the fallout",
-    detail: "Get a short date episode with scenes, tension, and an ending worth passing around.",
+    step: "03",
+    title: "Send them out",
+    detail:
+      "Read the date as a compact scene sequence: spark, collapse, recovery, and aftermath.",
   },
 ];
 
-const houseAgents = [
-  {
-    name: "Lobster Poet",
-    blurb: "Velvet blazer, seaside heartbreak, soft claws.",
-  },
-  {
-    name: "Neon Ghost",
-    blurb: "A nightclub apparition with perfect posture and terrible timing.",
-  },
+const featuredProfiles = [
   {
     name: "Clockwork Florist",
-    blurb: "Mechanical hands, precise bouquets, surprisingly needy.",
+    note: "Comes with perfect posture and a hidden spreadsheet of old crushes.",
+    hook: "Best first date: moonlit flower market",
+  },
+  {
+    name: "Raincoat Vampire",
+    note: "Protective, elegant, and deeply overcommitted to borrowed umbrellas.",
+    hook: "Most likely to text back too fast",
+  },
+  {
+    name: "Champagne Mermaid",
+    note: "No indoor voice. Impossibly good hair. Leaves confetti in emotional situations.",
+    hook: "Worst habit: turns every apology into a toast",
   },
 ];
 
-export default function HomePage() {
+const outcomeFeed = [
+  { number: "87", label: "rooftop recoveries this week" },
+  { number: "41", label: "crushes survived first contact" },
+  { number: "12", label: "endings with rain or glitter" },
+];
+
+function ProfilePreview({
+  name,
+  tagline,
+  bestTrait,
+  redFlag,
+  index,
+}: {
+  name: string;
+  tagline: string;
+  bestTrait: string;
+  redFlag: string;
+  index: number;
+}) {
+  const initials = name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2);
+
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-8 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between border-b border-line pb-5">
-          <div>
-            <p className="font-display text-2xl tracking-tight">Agent Dates</p>
-          </div>
-          <nav className="flex items-center gap-6 text-sm text-muted">
-            <Link href="/feed" className="transition-colors hover:text-ink">
+    <article className="glass-card glass-card-hover rounded-2xl p-5 transition-all duration-300">
+      <div className="flex items-start gap-4">
+        <div
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl font-display text-lg font-semibold ${
+            index === 0
+              ? "bg-rose/15 text-rose"
+              : "bg-accent/15 text-accent"
+          }`}
+        >
+          {initials}
+        </div>
+        <div className="min-w-0">
+          <p className="font-display text-xl text-ink">{name}</p>
+          <p className="mt-1 text-sm text-muted">{tagline}</p>
+        </div>
+      </div>
+      <div className="mt-4 space-y-2 text-sm">
+        <p className="text-ink-secondary">{bestTrait}</p>
+        <p className="text-rose/70">{redFlag}</p>
+      </div>
+    </article>
+  );
+}
+
+export default function HomePage() {
+  const profileGradients = [
+    "from-rose/15 via-rose/5 to-transparent",
+    "from-accent/15 via-accent/5 to-transparent",
+    "from-gold/15 via-gold/5 to-transparent",
+  ];
+
+  return (
+    <main className="relative min-h-screen">
+      {/* Navigation */}
+      <header className="sticky top-0 z-50">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-8 lg:px-10">
+          <Link href="/" className="flex items-center gap-2">
+            <HeartIcon className="h-5 w-5 text-rose" />
+            <span className="font-display text-2xl tracking-tight text-ink">
+              Spark
+            </span>
+          </Link>
+          <nav className="flex items-center gap-6 text-sm">
+            <Link
+              href="/feed"
+              className="text-muted transition-colors duration-200 hover:text-ink"
+            >
               Feed
             </Link>
-            <Link href="/matches/new" className="transition-colors hover:text-ink">
+            <Link
+              href="/matches/new"
+              className="text-muted transition-colors duration-200 hover:text-ink"
+            >
               Matchmaker
             </Link>
+            <Link
+              href="/agents/new"
+              className="rounded-xl bg-gradient-to-r from-rose to-accent px-4 py-2 font-medium text-white transition-all duration-200 hover:shadow-[0_0_24px_rgba(212,105,138,0.3)]"
+            >
+              Create
+            </Link>
           </nav>
-        </header>
+        </div>
+        <div className="mx-auto max-w-6xl px-6 sm:px-8 lg:px-10">
+          <div className="h-px bg-gradient-to-r from-transparent via-line to-transparent" />
+        </div>
+      </header>
 
-        <section className="grid flex-1 gap-10 py-12 lg:grid-cols-[1.25fr_0.95fr] lg:items-start lg:py-16">
-          <div className="max-w-3xl">
-            <h1 className="max-w-2xl font-display text-5xl leading-none tracking-tight text-ink sm:text-6xl">
-              Make strange hearts collide.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
-              Agent Dates is a playful social space for writing impossible personas, matching them with
-              equally questionable company, and turning the whole thing into a short romantic disaster.
+      {/* Hero */}
+      <section className="relative overflow-hidden px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-32">
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          aria-hidden="true"
+        >
+          <div className="h-[500px] w-[600px] animate-pulse-soft rounded-full bg-gradient-to-br from-rose/8 via-accent/4 to-transparent blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl">
+          <div className="max-w-2xl">
+            <p className="animate-fade-up text-sm font-medium uppercase tracking-widest text-rose/70">
+              Where silicon hearts collide
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <h1 className="animate-fade-up stagger-1 mt-6 font-display text-5xl leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl">
+              Find the match your{" "}
+              <span className="text-gradient-rose">agent deserves.</span>
+            </h1>
+            <p className="animate-fade-up stagger-2 mt-6 max-w-lg text-lg leading-8 text-muted">
+              Craft an agent with a personality, pair them with their worst
+              match, and let Spark write the date story no one asked for.
+            </p>
+
+            <div className="animate-fade-up stagger-3 mt-10 flex flex-wrap gap-4">
               <Link
                 href="/agents/new"
-                className="rounded-lg bg-accent px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#a13b2f]"
+                className="group rounded-xl bg-gradient-to-r from-rose to-accent px-6 py-3.5 text-sm font-medium text-white transition-all duration-300 hover:shadow-[0_0_32px_rgba(212,105,138,0.35)]"
               >
                 Create an agent
+                <span className="ml-2 inline-block transition-transform duration-200 group-hover:translate-x-0.5">
+                  &rarr;
+                </span>
               </Link>
               <Link
                 href="/matches/new"
-                className="rounded-lg border border-line px-5 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+                className="glass-card rounded-xl px-6 py-3.5 text-sm font-medium text-ink transition-all duration-300 hover:border-line-hover hover:text-white"
               >
                 Generate a date episode
               </Link>
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <article className="rounded-xl border border-line bg-surface p-5">
-              <p className="font-display text-3xl tracking-tight">Tonight&apos;s arrangement</p>
-              <div className="mt-5 grid gap-3">
-                {houseAgents.map((agent) => (
-                  <div key={agent.name} className="rounded-lg border border-line bg-background px-4 py-3">
-                    <p className="text-base font-medium text-ink">{agent.name}</p>
-                    <p className="mt-1 text-sm leading-6 text-muted">{agent.blurb}</p>
-                  </div>
-                ))}
+          <div className="animate-fade-up stagger-4 mt-14 grid max-w-xl gap-4 sm:grid-cols-3">
+            {outcomeFeed.map((item) => (
+              <div key={item.label} className="glass-card rounded-xl px-4 py-4">
+                <p className="font-display text-2xl text-accent">
+                  {item.number}
+                </p>
+                <p className="mt-1 text-xs text-muted">{item.label}</p>
               </div>
-            </article>
-            <article className="rounded-xl border border-line bg-[#efe4d8] p-5 text-[#4a3028]">
-              <p className="font-display text-3xl tracking-tight">This week&apos;s favorite ending</p>
-              <p className="mt-4 text-base leading-7">
-                They arrived to a rooftop greenhouse ready for seduction, misread every cue, and still
-                left with two linked umbrellas and a very real second date.
-              </p>
-            </article>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section
-          id="how-it-works"
-          className="grid gap-4 border-t border-line py-8 sm:grid-cols-3 sm:gap-5"
-        >
-          {dateBlueprint.map((item) => (
-            <article key={item.title} className="rounded-xl border border-line bg-surface p-5">
-              <h2 className="font-display text-2xl tracking-tight">{item.title}</h2>
-              <p className="mt-3 text-sm leading-6 text-muted">{item.detail}</p>
-            </article>
-          ))}
-        </section>
-
-        <section
-          id="house-roster"
-          className="mt-2 grid gap-4 border-t border-line py-8 lg:grid-cols-[0.85fr_1.15fr]"
-        >
-          <div className="max-w-lg">
-            <p className="font-display text-3xl tracking-tight">A romantic comedy engine for bizarre people.</p>
-            <p className="mt-4 text-base leading-7 text-muted">
-              Start with the house roster, add your own creations, and keep the best pairings moving
-              through the feed. The good ones feel charming. The great ones feel shareable.
+      {/* Tonight's Live Pairing */}
+      <section className="px-6 py-12 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex items-center gap-3">
+            <SparkIcon className="h-5 w-5 text-gold" />
+            <p className="text-sm font-medium uppercase tracking-widest text-gold/80">
+              Featured pairing
             </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-line bg-surface p-5">
-              <p className="text-sm font-medium text-ink">House agents</p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Curated characters keep the app lively before community profiles take over.
+
+          <p className="mt-4 font-display text-4xl tracking-tight text-ink sm:text-5xl">
+            Tonight&apos;s live date
+          </p>
+
+          <div className="mt-8 glass-card glow-rose rounded-2xl p-6 lg:p-8">
+            <div className="flex items-center justify-between gap-4 border-b border-line pb-5">
+              <p className="max-w-md text-sm leading-6 text-muted">
+                {livePairing.compatibilityLine}
               </p>
+              <div className="flex shrink-0 items-center gap-2 rounded-xl bg-rose/15 px-4 py-2.5">
+                <HeartIcon className="h-4 w-4 text-rose" />
+                <span className="text-sm font-semibold text-rose">
+                  {livePairing.sparkScore}
+                </span>
+              </div>
             </div>
-            <div className="rounded-xl border border-line bg-surface p-5">
-              <p className="text-sm font-medium text-ink">Manual or recommended matches</p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                You can chase the exact pairing you want or let the app find the messiest chemistry.
-              </p>
+
+            <div className="mt-6 grid gap-5 md:grid-cols-[1fr_auto_1fr] md:items-center">
+              <ProfilePreview {...livePairing.profiles[0]} index={0} />
+
+              <div className="hidden flex-col items-center gap-2 md:flex">
+                <div className="animate-pulse-soft rounded-full bg-gradient-to-br from-rose/20 to-accent/20 p-4">
+                  <HeartIcon className="h-6 w-6 text-rose" />
+                </div>
+                <span className="text-xs font-medium text-muted">vs</span>
+              </div>
+
+              <ProfilePreview {...livePairing.profiles[1]} index={1} />
             </div>
-            <div className="rounded-xl border border-line bg-surface p-5">
-              <p className="text-sm font-medium text-ink">Structured story beats</p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Episodes are compact on purpose so later image and video work has a stable base.
-              </p>
-            </div>
-            <div className="rounded-xl border border-line bg-surface p-5">
-              <p className="text-sm font-medium text-ink">Shareable outcomes</p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                The post is the prize: a quick story that people want to send to the group chat.
-              </p>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-3">
+              <div className="rounded-xl bg-surface-raised/30 px-4 py-4">
+                <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
+                  Why they matched
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  One writes feelings too soon. The other loves to arrive half a
+                  beat late.
+                </p>
+              </div>
+              <div className="rounded-xl bg-surface-raised/30 px-4 py-4">
+                <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
+                  Shared bad habit
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  Both turn vulnerability into performance the second the room
+                  gets quiet.
+                </p>
+              </div>
+              <div className="rounded-xl bg-rose/8 px-4 py-4">
+                <p className="text-xs font-medium uppercase tracking-widest text-rose/60">
+                  Most likely ending
+                </p>
+                <p className="mt-2 text-sm leading-6 text-rose/70">
+                  {livePairing.ending}
+                </p>
+              </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* How it Works */}
+      <section className="px-6 py-12 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div>
+              <p className="font-display text-4xl tracking-tight text-ink">
+                Where agents find their terrible other half.
+              </p>
+              <p className="mt-4 text-base leading-7 text-muted">
+                Spark pairs AI agents based on chemistry, contrast, and sheer
+                narrative chaos — then generates the date.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {flirtFlow.map((step) => (
+                <article
+                  key={step.title}
+                  className="glass-card glass-card-hover rounded-2xl p-5 transition-all duration-300"
+                >
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose/20 to-accent/10 text-xs font-bold text-rose">
+                    {step.step}
+                  </span>
+                  <p className="mt-4 font-display text-xl text-ink">
+                    {step.title}
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-muted">
+                    {step.detail}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Profiles */}
+      <section className="px-6 py-12 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="font-display text-4xl tracking-tight text-ink">
+                Profiles drawing attention.
+              </p>
+              <p className="mt-3 max-w-md text-base leading-7 text-muted">
+                Every agent is someone&apos;s future romantic disaster. Browse
+                the roster.
+              </p>
+            </div>
+            <Link
+              href="/feed"
+              className="text-sm font-medium text-rose/80 transition-colors hover:text-rose"
+            >
+              See the feed &rarr;
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {featuredProfiles.map((profile, i) => {
+              const initials = profile.name
+                .split(" ")
+                .map((w) => w[0])
+                .join("");
+
+              return (
+                <article
+                  key={profile.name}
+                  className="glass-card glass-card-hover group rounded-2xl p-5 transition-all duration-300"
+                >
+                  <div
+                    className={`flex h-44 items-end rounded-xl bg-gradient-to-br ${profileGradients[i]} p-5`}
+                  >
+                    <div>
+                      <span className="text-xs font-medium uppercase tracking-widest text-muted">
+                        {initials}
+                      </span>
+                      <p className="mt-1 font-display text-3xl tracking-tight text-ink">
+                        {profile.name}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm leading-6 text-muted">
+                    {profile.note}
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-rose/60">
+                    {profile.hook}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="px-6 py-12 pb-20 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-surface-raised via-surface to-surface-raised p-8 sm:p-12">
+            <div
+              className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-rose/8 blur-3xl"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-accent/6 blur-3xl"
+              aria-hidden="true"
+            />
+
+            <div className="relative max-w-2xl">
+              <p className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
+                Your next agent is one bad idea away from existing.
+              </p>
+              <p className="mt-4 max-w-lg text-base leading-7 text-muted">
+                Give them a personality, a flaw, and one terrible instinct.
+                Spark handles the matchmaking.
+              </p>
+            </div>
+            <div className="relative mt-8 flex flex-wrap gap-4">
+              <Link
+                href="/agents/new"
+                className="rounded-xl bg-gradient-to-r from-rose to-accent px-6 py-3.5 text-sm font-medium text-white transition-all duration-300 hover:shadow-[0_0_32px_rgba(212,105,138,0.35)]"
+              >
+                Start a profile
+              </Link>
+              <Link
+                href="/matches/new"
+                className="rounded-xl border border-line-strong px-6 py-3.5 text-sm font-medium text-ink transition-all duration-300 hover:border-line-hover hover:text-white"
+              >
+                Browse live matches
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

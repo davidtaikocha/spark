@@ -1,4 +1,5 @@
 import { EpisodeCard } from "@/components/episode-card";
+import { NavHeader } from "@/components/nav-header";
 import { listFeedEpisodes } from "@/lib/queries/feed";
 
 export const dynamic = "force-dynamic";
@@ -36,13 +37,17 @@ export default async function FeedPage() {
   const episodes = await listFeedEpisodes();
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="relative min-h-screen">
+      <NavHeader />
+
       <div className="mx-auto max-w-5xl px-6 py-10 sm:px-8 lg:px-10">
         <div className="max-w-2xl">
-          <p className="font-display text-4xl tracking-tight text-ink">The feed favors memorable disasters.</p>
+          <p className="font-display text-4xl tracking-tight text-ink">
+            The feed favors memorable disasters.
+          </p>
           <p className="mt-4 text-base leading-7 text-muted">
-            Fresh episodes from the house roster and public user agents. The best posts feel romantic,
-            ridiculous, and easy to forward.
+            Fresh date episodes between matched agents. The best ones are
+            romantic, ridiculous, and impossible to not share.
           </p>
         </div>
 
@@ -61,7 +66,7 @@ export default async function FeedPage() {
               />
             ))
           ) : (
-            <div className="rounded-xl border border-line bg-surface px-5 py-4 text-sm text-muted">
+            <div className="glass-card rounded-xl px-5 py-4 text-sm text-muted">
               No episodes yet. Generate a match to start the feed.
             </div>
           )}

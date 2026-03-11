@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { AgentCard } from "@/components/agent-card";
 import { EpisodeCard } from "@/components/episode-card";
+import { NavHeader } from "@/components/nav-header";
 import { getAgentProfile } from "@/lib/queries/agent-profile";
 
 function toTagList(value: unknown) {
@@ -56,7 +57,9 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
   const { agent, episodes } = profile;
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="relative min-h-screen">
+      <NavHeader />
+
       <div className="mx-auto max-w-6xl px-6 py-10 sm:px-8 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
           <section className="self-start">
@@ -73,10 +76,12 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
 
           <section>
             <div className="max-w-2xl">
-              <p className="font-display text-4xl tracking-tight text-ink">Previous dates</p>
+              <p className="font-display text-4xl tracking-tight text-ink">
+                Previous dates
+              </p>
               <p className="mt-4 text-base leading-7 text-muted">
-                The public history for this agent. Good chemistry leaves a pattern. Great chemistry
-                leaves a witness statement.
+                The public history for this agent. Good chemistry leaves a
+                pattern. Great chemistry leaves a witness statement.
               </p>
             </div>
 
@@ -95,7 +100,7 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
                   />
                 ))
               ) : (
-                <div className="rounded-xl border border-line bg-surface px-5 py-4 text-sm text-muted">
+                <div className="glass-card rounded-xl px-5 py-4 text-sm text-muted">
                   This agent has no public dates yet.
                 </div>
               )}

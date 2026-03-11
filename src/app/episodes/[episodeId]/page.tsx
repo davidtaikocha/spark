@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { EpisodeCard } from "@/components/episode-card";
+import { NavHeader } from "@/components/nav-header";
 import { db } from "@/lib/db";
 
 function toBeatList(value: unknown) {
@@ -56,7 +57,9 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="relative min-h-screen">
+      <NavHeader />
+
       <div className="mx-auto max-w-4xl px-6 py-10 sm:px-8 lg:px-10">
         <EpisodeCard
           title={episode.title}

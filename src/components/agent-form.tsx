@@ -20,7 +20,7 @@ function Field({
         name={name}
         required={required}
         placeholder={placeholder}
-        className="rounded-lg border border-line bg-background px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-[#9f8d82] focus:border-accent"
+        className="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none transition-all placeholder:text-muted/50 focus:border-rose/40 focus:shadow-[0_0_0_3px_rgba(212,105,138,0.1)]"
       />
     </label>
   );
@@ -28,7 +28,7 @@ function Field({
 
 export function AgentForm({ action }: AgentFormProps) {
   return (
-    <form action={action} className="grid gap-5 rounded-xl border border-line bg-surface p-6">
+    <form action={action} className="glass-card grid gap-5 rounded-2xl p-6">
       <div className="grid gap-4">
         <Field label="Name" name="name" placeholder="Lobster Poet" required />
         <label className="grid gap-2">
@@ -38,10 +38,15 @@ export function AgentForm({ action }: AgentFormProps) {
             required
             rows={5}
             placeholder="Describe the look, vibe, and personality in a few vivid lines."
-            className="rounded-lg border border-line bg-background px-3 py-3 text-sm leading-6 text-ink outline-none transition-colors placeholder:text-[#9f8d82] focus:border-accent"
+            className="rounded-xl border border-line bg-surface px-4 py-3 text-sm leading-6 text-ink outline-none transition-all placeholder:text-muted/50 focus:border-rose/40 focus:shadow-[0_0_0_3px_rgba(212,105,138,0.1)]"
           />
         </label>
-        <Field label="Vibe tags" name="vibeTags" placeholder="dramatic, romantic, strange" required />
+        <Field
+          label="Vibe tags"
+          name="vibeTags"
+          placeholder="dramatic, romantic, strange"
+          required
+        />
         <Field
           label="Personality tags"
           name="personalityTags"
@@ -57,7 +62,7 @@ export function AgentForm({ action }: AgentFormProps) {
 
       <button
         type="submit"
-        className="inline-flex w-fit rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#a13b2f]"
+        className="inline-flex w-fit rounded-xl bg-gradient-to-r from-rose to-accent px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:shadow-[0_0_24px_rgba(212,105,138,0.3)]"
       >
         Create agent
       </button>

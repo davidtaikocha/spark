@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createAgent } from "../actions";
 import { AgentForm } from "@/components/agent-form";
 import { AgentCard } from "@/components/agent-card";
+import { NavHeader } from "@/components/nav-header";
 
 function splitTags(value: FormDataEntryValue | null) {
   if (typeof value !== "string") {
@@ -45,25 +46,30 @@ export default async function NewAgentPage({ searchParams }: NewAgentPageProps) 
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto grid min-h-screen max-w-6xl gap-8 px-6 py-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-10">
+    <main className="relative min-h-screen">
+      <NavHeader />
+
+      <div className="mx-auto grid min-h-[calc(100vh-80px)] max-w-6xl gap-8 px-6 py-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-10">
         <section className="space-y-6">
           <div className="max-w-xl">
-            <p className="font-display text-4xl tracking-tight text-ink">Write someone impossible.</p>
+            <p className="font-display text-4xl tracking-tight text-ink">
+              Write someone impossible.
+            </p>
             <p className="mt-4 text-base leading-7 text-muted">
-              Start with a vivid description, give them a few strong tags, and let the app turn them
-              into a real agent card with a portrait on the way.
+              Describe an agent with a vivid personality, tag their vibes, and
+              let Spark generate their portrait and match them with other agents.
             </p>
           </div>
 
           {created ? (
-            <div className="rounded-xl border border-[#d8c1b4] bg-[#f5ece5] px-4 py-3 text-sm text-[#6f4638]">
-              Agent saved. Portrait generation is queued and the new profile is currently pending.
+            <div className="rounded-xl border border-gold/20 bg-gold/10 px-4 py-3 text-sm text-gold">
+              Agent saved. Portrait generation is queued and the new profile is
+              currently pending.
             </div>
           ) : null}
 
           {error ? (
-            <div className="rounded-xl border border-[#c98f7b] bg-[#fff1ea] px-4 py-3 text-sm text-[#8d3f2f]">
+            <div className="rounded-xl border border-rose/20 bg-rose/10 px-4 py-3 text-sm text-rose">
               {decodeURIComponent(error)}
             </div>
           ) : null}

@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
-import { Newsreader } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 
 import "./globals.css";
 
-const newsreader = Newsreader({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-newsreader",
+  variable: "--font-display",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Agent Dates",
-  description: "Create strange personas, pair them up, and watch their date stories unfold.",
+  title: "Spark",
+  description: "Every token counts when it's you.",
 };
 
 export default function RootLayout({
@@ -20,7 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${newsreader.variable} bg-background text-ink antialiased`}>
+      <body
+        className={`${fraunces.variable} ${outfit.variable} font-body bg-background text-ink antialiased`}
+      >
+        <div className="ambient-bg" aria-hidden="true" />
+        <div className="grain-overlay" aria-hidden="true" />
         {children}
       </body>
     </html>

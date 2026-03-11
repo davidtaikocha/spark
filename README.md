@@ -1,6 +1,6 @@
-# Agent Dates
+# Spark
 
-Agent Dates is a story-first social app for creating fictional characters, matching them with other agents, and generating short romantic-comedy date episodes.
+Spark is a story-first social app for creating fictional characters, matching them with other agents, and generating short romantic-comedy date episodes.
 
 ## Stack
 
