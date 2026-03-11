@@ -1,9 +1,19 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
+}
+
+function loadPortraitDataUri(agentName: string): string {
+  const slug = toSlug(agentName);
+  const filePath = path.join(process.cwd(), "public", "portraits", `${slug}.svg`);
+  const svg = readFileSync(filePath, "utf8");
+  return `data:image/svg+xml;base64,${Buffer.from(svg, "utf8").toString("base64")}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -50,21 +60,23 @@ function speechBubble(
   text: string,
   cx: number,
   cy: number,
+  tailX: number,
+  tailY: number,
   speaker: "A" | "B" | "narration",
   panelW: number,
 ) {
-  const maxChars = panelW > 400 ? 38 : 24;
+  const maxChars = panelW > 400 ? 36 : 22;
   const lines = wrapText(text, maxChars);
-  const lineH = 16;
-  const pad = 12;
-  const bw = Math.min(panelW - 30, maxChars * 7.2 + 2 * pad);
+  const lineH = 15;
+  const pad = 10;
+  const bw = Math.min(panelW * 0.65, maxChars * 7 + 2 * pad);
   const bh = lines.length * lineH + 2 * pad;
   const bx = cx - bw / 2;
   const by = cy;
   const textLines = lines
     .map(
       (line, i) =>
-        `<text x="${cx}" y="${by + pad + 13 + i * lineH}" text-anchor="middle" fill="${speaker === "narration" ? "#78350f" : "#222"}" font-size="11" font-family="${speaker === "narration" ? "Georgia, serif" : "'Comic Sans MS', 'Chalkboard SE', cursive"}"${speaker === "narration" ? ' font-style="italic"' : ""}>${esc(line)}</text>`,
+        `<text x="${cx}" y="${by + pad + 12 + i * lineH}" text-anchor="middle" fill="${speaker === "narration" ? "#78350f" : "#222"}" font-size="10.5" font-family="${speaker === "narration" ? "Georgia, serif" : "'Comic Sans MS', 'Chalkboard SE', cursive"}"${speaker === "narration" ? ' font-style="italic"' : ""}>${esc(line)}</text>`,
     )
     .join("\n");
 
@@ -73,23 +85,49 @@ function speechBubble(
 ${textLines}`;
   }
 
-  const tailX = speaker === "A" ? bx + 28 : bx + bw - 28;
-  const tailD = speaker === "A" ? -1 : 1;
-  return `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="14" fill="white" stroke="#333" stroke-width="1.5"/>
-<polygon points="${tailX - 5},${by + bh - 1} ${tailX + 5},${by + bh - 1} ${tailX + 10 * tailD},${by + bh + 11}" fill="white" stroke="#333" stroke-width="1.5"/>
+  return `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="12" fill="white" stroke="#333" stroke-width="1.5"/>
+<polygon points="${tailX - 5},${by + bh - 1} ${tailX + 5},${by + bh - 1} ${tailX},${tailY}" fill="white" stroke="#333" stroke-width="1.5"/>
 <rect x="${tailX - 6}" y="${by + bh - 3}" width="12" height="5" fill="white"/>
 ${textLines}`;
 }
 
 function narrationLabel(label: string, x: number, y: number) {
-  const w = label.length * 8.5 + 18;
-  return `<rect x="${x}" y="${y}" width="${w}" height="22" rx="2" fill="#fbbf24" stroke="#92400e" stroke-width="1"/>
-<text x="${x + w / 2}" y="${y + 15}" text-anchor="middle" fill="#78350f" font-size="10" font-weight="bold" font-family="Georgia, serif">${esc(label.toUpperCase())}</text>`;
+  const w = label.length * 8 + 16;
+  return `<rect x="${x}" y="${y}" width="${w}" height="20" rx="2" fill="#fbbf24" stroke="#92400e" stroke-width="1"/>
+<text x="${x + w / 2}" y="${y + 14}" text-anchor="middle" fill="#78350f" font-size="9" font-weight="bold" font-family="Georgia, serif">${esc(label.toUpperCase())}</text>`;
 }
 
 function sfxText(text: string, x: number, y: number, color: string, rot = 0) {
   const tr = rot ? ` transform="rotate(${rot}, ${x}, ${y})"` : "";
-  return `<text x="${x}" y="${y}" fill="${color}" font-size="20" font-weight="bold" font-family="Impact, sans-serif" text-anchor="middle" opacity="0.85"${tr}>${esc(text)}</text>`;
+  return `<text x="${x}" y="${y}" fill="${color}" font-size="18" font-weight="bold" font-family="Impact, sans-serif" text-anchor="middle" opacity="0.85"${tr}>${esc(text)}</text>`;
+}
+
+/** Render a portrait <image> clipped to a circle, with optional horizontal flip */
+function portraitInCircle(
+  dataUri: string,
+  cx: number,
+  cy: number,
+  r: number,
+  clipId: string,
+  flip = false,
+) {
+  // Portrait SVGs are 640x768 (5:6 ratio). We want the face area (upper ~60%)
+  // to be visible inside the circle. Size the image so width = 2*r * 1.4.
+  const imgW = r * 2.8;
+  const imgH = imgW * (768 / 640);
+  const imgX = cx - imgW / 2;
+  const imgY = cy - r * 0.7; // shift up to show face/upper body
+
+  const flipTransform = flip
+    ? ` transform="translate(${2 * cx}, 0) scale(-1, 1)"`
+    : "";
+
+  return `<clipPath id="${clipId}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
+<circle cx="${cx}" cy="${cy}" r="${r + 2}" fill="rgba(0,0,0,0.4)" stroke="#222" stroke-width="2.5"/>
+<g clip-path="url(#${clipId})"${flipTransform}>
+  <image href="${dataUri}" x="${imgX}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMin slice"/>
+</g>
+<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#222" stroke-width="2.5"/>`;
 }
 
 type BeatData = {
@@ -108,13 +146,20 @@ type Palette = {
   accent: string;
 };
 
+type Portraits = { a: string; b: string };
+
 function buildComicSvg(
   title: string,
   agentA: string,
   agentB: string,
   beats: BeatData[],
   palette: Palette,
+  portraits: Portraits,
 ) {
+  // Each panel gets unique clip-path IDs
+  let clipCounter = 0;
+  const nextClipId = () => `pc${++clipCounter}`;
+
   const defs = `<defs>
   <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse">
     <circle cx="3" cy="3" r="0.7" fill="rgba(0,0,0,0.1)"/>
@@ -132,38 +177,53 @@ function buildComicSvg(
   const panelsSvg = beats.slice(0, 6).map((beat, i) => {
     const p = PANELS[i];
     const bg = palette.panels[i % palette.panels.length];
+    const isWide = p.w > 400;
     const parts: string[] = [];
 
-    // Panel background + border
+    // Panel background + clip for contents
     parts.push(`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="3" fill="${bg}" stroke="#111" stroke-width="3.5"/>`);
-    parts.push(`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="3" fill="url(#dots)" opacity="0.25"/>`);
+    parts.push(`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="3" fill="url(#dots)" opacity="0.2"/>`);
 
-    // Narration label
-    parts.push(narrationLabel(beat.label, p.x + 7, p.y + 8));
+    // Portrait sizes — smaller for narrow panels
+    const portraitR = isWide ? 48 : 36;
 
-    // Speech bubble
-    const bubbleCx =
-      beat.speaker === "A"
-        ? p.x + p.w * 0.4
-        : beat.speaker === "B"
-          ? p.x + p.w * 0.6
-          : p.x + p.w / 2;
-    parts.push(speechBubble(beat.dialogue, bubbleCx, p.y + 40, beat.speaker, p.w));
+    // Character positions — agent A on left, agent B mirrored on right
+    const aX = p.x + (isWide ? portraitR + 15 : portraitR + 8);
+    const bX = p.x + p.w - (isWide ? portraitR + 15 : portraitR + 8);
+    const charY = p.y + p.h - portraitR - 8;
 
-    // Character label
-    if (beat.speaker !== "narration") {
-      const name = beat.speaker === "A" ? agentA : agentB;
-      const lx = beat.speaker === "A" ? p.x + 12 : p.x + p.w - 12;
-      const anchor = beat.speaker === "A" ? "start" : "end";
-      parts.push(
-        `<text x="${lx}" y="${p.y + p.h - 10}" text-anchor="${anchor}" fill="${palette.accent}" font-size="8" font-weight="bold" font-family="'Courier New', monospace" letter-spacing="1.5" opacity="0.8">${esc(name.toUpperCase())}</text>`,
-      );
+    // Both characters appear in every panel, facing each other
+    parts.push(portraitInCircle(portraits.a, aX, charY, portraitR, nextClipId(), false));
+    parts.push(portraitInCircle(portraits.b, bX, charY, portraitR, nextClipId(), true));
+
+    // Character name labels under portraits
+    parts.push(
+      `<text x="${aX}" y="${p.y + p.h - 4}" text-anchor="middle" fill="${palette.accent}" font-size="7" font-weight="bold" font-family="'Courier New', monospace" letter-spacing="1" opacity="0.8">${esc(agentA.split(" ")[0].toUpperCase())}</text>`,
+    );
+    parts.push(
+      `<text x="${bX}" y="${p.y + p.h - 4}" text-anchor="middle" fill="${palette.accent}" font-size="7" font-weight="bold" font-family="'Courier New', monospace" letter-spacing="1" opacity="0.8">${esc(agentB.split(" ")[0].toUpperCase())}</text>`,
+    );
+
+    // Narration label (top-left corner)
+    parts.push(narrationLabel(beat.label, p.x + 7, p.y + 7));
+
+    // Speech bubble — positioned above the speaker's portrait
+    if (beat.speaker === "A") {
+      const bubbleCx = aX + (isWide ? 40 : 20);
+      parts.push(speechBubble(beat.dialogue, bubbleCx, p.y + 8 + 20, aX, charY - portraitR, "A", p.w));
+    } else if (beat.speaker === "B") {
+      const bubbleCx = bX - (isWide ? 40 : 20);
+      parts.push(speechBubble(beat.dialogue, bubbleCx, p.y + 8 + 20, bX, charY - portraitR, "B", p.w));
+    } else {
+      // Narration — centered between the two characters
+      const narCx = p.x + p.w / 2;
+      parts.push(speechBubble(beat.dialogue, narCx, p.y + 8 + 20, narCx, charY - portraitR, "narration", p.w));
     }
 
     // SFX
     if (beat.sfx) {
-      const sx = beat.speaker === "A" ? p.x + p.w * 0.82 : p.x + p.w * 0.18;
-      const sy = p.y + p.h * 0.72;
+      const sx = p.x + p.w / 2;
+      const sy = p.y + p.h * 0.45;
       parts.push(sfxText(beat.sfx, sx, sy, beat.sfxColor ?? "#ff6b6b", -10));
     }
 
@@ -174,7 +234,7 @@ function buildComicSvg(
   const footer = `<text x="${PAGE_W / 2}" y="${footerY}" text-anchor="middle" fill="${palette.accent}" font-size="10" font-family="Georgia, serif" letter-spacing="2.5" opacity="0.7">${esc(agentA.toUpperCase())}  &amp;  ${esc(agentB.toUpperCase())}</text>
 <text x="${PAGE_W / 2}" y="${footerY + 32}" text-anchor="middle" fill="rgba(255,255,255,0.18)" font-size="26" font-weight="bold" font-family="Impact, sans-serif" letter-spacing="6">THE END</text>`;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${PAGE_W}" height="${PAGE_H}" viewBox="0 0 ${PAGE_W} ${PAGE_H}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${PAGE_W}" height="${PAGE_H}" viewBox="0 0 ${PAGE_W} ${PAGE_H}">
 ${defs}
 <rect width="${PAGE_W}" height="${PAGE_H}" fill="${palette.page}"/>
 <rect width="${PAGE_W}" height="${PAGE_H}" fill="url(#scanlines)"/>
@@ -417,7 +477,9 @@ async function main() {
       },
     });
 
-    const comicSvg = buildComicSvg(ep.title, ep.agentA, ep.agentB, ep.dialogue, ep.palette);
+    const portraitA = loadPortraitDataUri(ep.agentA);
+    const portraitB = loadPortraitDataUri(ep.agentB);
+    const comicSvg = buildComicSvg(ep.title, ep.agentA, ep.agentB, ep.dialogue, ep.palette, { a: portraitA, b: portraitB });
 
     await prisma.episode.create({
       data: {
