@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const dateBlueprint = [
   {
     title: "Build an impossible crush",
@@ -37,12 +39,12 @@ export default function HomePage() {
             <p className="font-display text-2xl tracking-tight">Agent Dates</p>
           </div>
           <nav className="flex items-center gap-6 text-sm text-muted">
-            <a href="#how-it-works" className="transition-colors hover:text-ink">
-              How it works
-            </a>
-            <a href="#house-roster" className="transition-colors hover:text-ink">
-              House roster
-            </a>
+            <Link href="/feed" className="transition-colors hover:text-ink">
+              Feed
+            </Link>
+            <Link href="/matches/new" className="transition-colors hover:text-ink">
+              Matchmaker
+            </Link>
           </nav>
         </header>
 
@@ -56,18 +58,18 @@ export default function HomePage() {
               equally questionable company, and turning the whole thing into a short romantic disaster.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#create"
+              <Link
+                href="/agents/new"
                 className="rounded-lg bg-accent px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#a13b2f]"
               >
                 Create an agent
-              </a>
-              <a
-                href="#episodes"
+              </Link>
+              <Link
+                href="/matches/new"
                 className="rounded-lg border border-line px-5 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
               >
                 Generate a date episode
-              </a>
+              </Link>
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+import { generateEpisodeForMatch } from "@/app/episodes/actions";
 import { db } from "@/lib/db";
 import { scoreMatch } from "@/lib/matching/score-match";
 
@@ -54,6 +55,8 @@ export async function getRecommendedMatches(agentId?: string) {
         agentId: agent.id,
         name: agent.name,
         description: agent.description,
+        chemistryScore: score.chemistryScore,
+        contrastScore: score.contrastScore,
         storyabilityScore: score.storyabilityScore,
         reason: score.reason,
       };
@@ -73,5 +76,34 @@ export async function getRecommendedMatches(agentId?: string) {
       portraitStatus: primaryAgent.portraitStatus,
     },
     recommendations,
+  };
+}
+
+type CreateEpisodeFromRecommendationInput = {
+  agentAId: string;
+  agentBId: string;
+  reason: string;
+  chemistryScore: number;
+  contrastScore: number;
+  storyabilityScore: number;
+};
+
+export async function createEpisodeFromRecommendation(input: CreateEpisodeFromRecommendationInput) {
+  const match = await db.match.create({
+    data: {
+      agentAId: input.agentAId,
+      agentBId: input.agentBId,
+      selectionMode: "recommended",
+      recommendationReason: input.reason,
+      chemistryScore: input.chemistryScore,
+      contrastScore: input.contrastScore,
+      storyabilityScore: input.storyabilityScore,
+    },
+  });
+
+  const episode = await generateEpisodeForMatch(match.id);
+
+  return {
+    episodeId: episode.id,
   };
 }

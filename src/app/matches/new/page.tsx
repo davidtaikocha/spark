@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
+
 import { AgentCard } from "@/components/agent-card";
 import { RecommendationList } from "@/components/recommendation-list";
 
-import { getRecommendedMatches } from "../actions";
+import { createEpisodeFromRecommendation, getRecommendedMatches } from "../actions";
 
 type MatchPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -11,6 +13,21 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
   const params = (await searchParams) ?? {};
   const agentId = typeof params.agentId === "string" ? params.agentId : undefined;
   const { primaryAgent, recommendations } = await getRecommendedMatches(agentId);
+
+  async function handleGenerateEpisode(formData: FormData) {
+    "use server";
+
+    const result = await createEpisodeFromRecommendation({
+      agentAId: String(formData.get("agentAId") ?? ""),
+      agentBId: String(formData.get("agentBId") ?? ""),
+      reason: String(formData.get("reason") ?? ""),
+      chemistryScore: Number(formData.get("chemistryScore") ?? 0),
+      contrastScore: Number(formData.get("contrastScore") ?? 0),
+      storyabilityScore: Number(formData.get("storyabilityScore") ?? 0),
+    });
+
+    redirect(`/episodes/${result.episodeId}`);
+  }
 
   return (
     <main className="min-h-screen bg-background">
@@ -33,7 +50,11 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
                   These pairings score well on contrast, chemistry, and weird-hook novelty.
                 </p>
               </div>
-              <RecommendationList items={recommendations} />
+              <RecommendationList
+                primaryAgentId={primaryAgent.id}
+                items={recommendations}
+                action={handleGenerateEpisode}
+              />
             </section>
           </div>
         ) : (

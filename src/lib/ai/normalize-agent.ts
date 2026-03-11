@@ -3,10 +3,15 @@ import { generateObject } from "ai";
 import type { AgentInput } from "@/lib/domain/agent";
 
 import { getTextModel } from "./client";
+import { mockNormalizeAgent, shouldUseMockAi } from "./mock";
 import { buildNormalizationPrompt } from "./prompts";
 import { normalizedAgentSchema, type NormalizedAgent } from "./types";
 
 export async function normalizeAgent(input: AgentInput): Promise<NormalizedAgent> {
+  if (shouldUseMockAi()) {
+    return mockNormalizeAgent(input);
+  }
+
   const { object } = await generateObject({
     model: getTextModel(),
     schema: normalizedAgentSchema,

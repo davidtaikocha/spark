@@ -1,4 +1,3 @@
-import type { GeneratedFile } from "ai";
 import { z } from "zod";
 
 export type PromptAgent = {
@@ -46,7 +45,10 @@ export type EpisodePromptInput = {
 };
 
 export type PortraitResult = {
-  image: GeneratedFile;
+  image: {
+    base64: string;
+    mediaType: string;
+  };
   prompt: string;
   model: string;
 };
