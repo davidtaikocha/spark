@@ -55,5 +55,5 @@ pnpm test
 pnpm exec next typegen && pnpm exec tsc --noEmit
 pnpm build
 pnpm exec playwright install chromium
-pnpm exec playwright test
+pnpm test:e2e
 ```
