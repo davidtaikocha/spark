@@ -1,5 +1,6 @@
 "use server";
 
+import { completePortraitGeneration } from "@/app/api/agents/[agentId]/portrait/route";
 import { agentInputSchema } from "@/lib/domain/agent";
 import { db } from "@/lib/db";
 import { normalizeAgent } from "@/lib/ai/normalize-agent";
@@ -41,5 +42,5 @@ export async function createAgent(input: CreateAgentInput) {
 }
 
 async function queuePortraitGeneration(_agentId: string) {
-  return Promise.resolve();
+  void completePortraitGeneration(_agentId).catch(() => undefined);
 }

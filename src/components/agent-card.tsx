@@ -6,7 +6,9 @@ type AgentCardProps = {
   vibeTags: string[];
   personalityTags: string[];
   weirdHook?: string;
+  portraitUrl?: string;
   portraitStatus?: string;
+  rerollAction?: string;
 };
 
 function TagRow({ label, tags }: { label: string; tags: string[] }) {
@@ -30,7 +32,9 @@ export function AgentCard({
   vibeTags,
   personalityTags,
   weirdHook,
+  portraitUrl,
   portraitStatus = "pending",
+  rerollAction,
 }: AgentCardProps) {
   return (
     <article className="rounded-xl border border-line bg-surface p-5">
@@ -42,9 +46,15 @@ export function AgentCard({
         <PortraitStatus status={portraitStatus} />
       </div>
 
-      <div className="mt-5 rounded-xl border border-dashed border-line bg-background px-4 py-8 text-center">
-        <p className="font-display text-4xl text-[#a75d46]">{name.slice(0, 1).toUpperCase()}</p>
-        <p className="mt-2 text-sm text-muted">Portrait will appear here after generation completes.</p>
+      <div className="mt-5 overflow-hidden rounded-xl border border-dashed border-line bg-background">
+        {portraitUrl ? (
+          <img src={portraitUrl} alt={`${name} portrait`} className="h-72 w-full object-cover" />
+        ) : (
+          <div className="px-4 py-8 text-center">
+            <p className="font-display text-4xl text-[#a75d46]">{name.slice(0, 1).toUpperCase()}</p>
+            <p className="mt-2 text-sm text-muted">Portrait will appear here after generation completes.</p>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 grid gap-4">
@@ -57,6 +67,17 @@ export function AgentCard({
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Weird hook</p>
           <p className="mt-2 text-sm leading-6 text-ink">{weirdHook}</p>
         </div>
+      ) : null}
+
+      {rerollAction ? (
+        <form action={rerollAction} method="post" className="mt-5">
+          <button
+            type="submit"
+            className="rounded-lg border border-line px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+          >
+            Reroll portrait
+          </button>
+        </form>
       ) : null}
     </article>
   );
