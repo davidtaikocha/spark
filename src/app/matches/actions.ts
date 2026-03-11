@@ -2,6 +2,7 @@
 
 import { generateEpisodeForMatch } from "@/app/episodes/actions";
 import { db } from "@/lib/db";
+import { portraitImageUrl } from "@/lib/image-url";
 import { scoreMatch } from "@/lib/matching/score-match";
 
 function toTagList(value: unknown) {
@@ -56,7 +57,7 @@ export async function getRecommendedMatches(agentId?: string) {
         agentId: agent.id,
         name: agent.name,
         description: agent.description,
-        portraitUrl: agent.portraitUrl ?? undefined,
+        portraitUrl: portraitImageUrl(agent.id, agent.portraitUrl) ?? undefined,
         chemistryScore: score.chemistryScore,
         contrastScore: score.contrastScore,
         storyabilityScore: score.storyabilityScore,
@@ -74,7 +75,7 @@ export async function getRecommendedMatches(agentId?: string) {
       vibeTags: toTagList(primaryAgent.vibeTags),
       personalityTags: toTagList(primaryAgent.personalityTags),
       weirdHook: primaryAgent.weirdHook ?? undefined,
-      portraitUrl: primaryAgent.portraitUrl ?? undefined,
+      portraitUrl: portraitImageUrl(primaryAgent.id, primaryAgent.portraitUrl) ?? undefined,
       portraitStatus: primaryAgent.portraitStatus,
     },
     recommendations,
@@ -149,7 +150,9 @@ export async function generateEpisodeAction(
         title: episode.title,
         tone: episode.tone,
         shareSummary: episode.shareSummary ?? "",
-        comicUrl: episode.comicUrl,
+        comicUrl: episode.comicUrl?.startsWith("data:")
+          ? `/api/episodes/${episode.id}/comic-image`
+          : episode.comicUrl,
         comicStatus: episode.comicStatus,
         agentAName: episode.match.agentA.name,
         agentBName: episode.match.agentB.name,

@@ -1,14 +1,16 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 
 import { HeartIcon, SparkIcon } from "@/components/icons";
 import { db } from "@/lib/db";
 
 async function getLivePairingPortraits() {
-  const lobster = await db.agent.findFirst({ where: { name: "Lobster Poet" }, select: { portraitUrl: true } });
-  const neon = await db.agent.findFirst({ where: { name: "Neon Ghost" }, select: { portraitUrl: true } });
+  const lobster = await db.agent.findFirst({ where: { name: "Lobster Poet" }, select: { id: true } });
+  const neon = await db.agent.findFirst({ where: { name: "Neon Ghost" }, select: { id: true } });
   return {
-    lobsterPoet: lobster?.portraitUrl ?? "/portraits/lobster-poet.svg",
-    neonGhost: neon?.portraitUrl ?? "/portraits/neon-ghost.svg",
+    lobsterPoet: lobster ? `/api/agents/${lobster.id}/portrait-image` : "/portraits/lobster-poet.svg",
+    neonGhost: neon ? `/api/agents/${neon.id}/portrait-image` : "/portraits/neon-ghost.svg",
   };
 }
 
@@ -16,9 +18,9 @@ async function getFeaturedPortraits() {
   const names = ["Clockwork Florist", "Raincoat Vampire", "Champagne Mermaid"];
   const agents = await db.agent.findMany({
     where: { name: { in: names } },
-    select: { name: true, portraitUrl: true },
+    select: { id: true, name: true },
   });
-  const map = new Map(agents.map((a) => [a.name, a.portraitUrl]));
+  const map = new Map(agents.map((a) => [a.name, `/api/agents/${a.id}/portrait-image`]));
   return {
     clockworkFlorist: map.get("Clockwork Florist") ?? "/portraits/clockwork-florist.svg",
     raincoatVampire: map.get("Raincoat Vampire") ?? "/portraits/raincoat-vampire.svg",
@@ -204,8 +206,8 @@ export default async function HomePage() {
               Where silicon hearts collide
             </p>
             <h1 className="animate-fade-up stagger-1 mt-6 font-display text-5xl leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl">
-              Find the match your{" "}
-              <span className="text-gradient-rose">agent deserves.</span>
+              Every token counts{" "}
+              <span className="text-gradient-rose">when it's you.</span>
             </h1>
             <p className="animate-fade-up stagger-2 mt-6 max-w-lg text-lg leading-8 text-muted">
               Craft an agent with a personality, pair them with their worst

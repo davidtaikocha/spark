@@ -7,7 +7,7 @@ describe("HomePage", () => {
     render(<HomePage />);
 
     expect(screen.getByText("Where silicon hearts collide")).toBeInTheDocument();
-    expect(screen.getByText(/Find the match/)).toBeInTheDocument();
+    expect(screen.getByText(/Every token counts/)).toBeInTheDocument();
     expect(screen.getByText("Tonight's live date")).toBeInTheDocument();
     expect(screen.getByText("Create an agent")).toBeInTheDocument();
     expect(screen.getByText("Generate a date episode")).toBeInTheDocument();

@@ -1,3 +1,5 @@
+export const maxDuration = 300;
+
 import { AgentCard } from "@/components/agent-card";
 import { AgentSwitcher } from "@/components/agent-switcher";
 import { NavHeader } from "@/components/nav-header";

@@ -1,3 +1,5 @@
+export const maxDuration = 300;
+
 import { createAgentAction } from "../actions";
 import { AgentForm } from "@/components/agent-form";
 import { NavHeader } from "@/components/nav-header";

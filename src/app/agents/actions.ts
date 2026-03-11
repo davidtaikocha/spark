@@ -4,6 +4,7 @@ import { completePortraitGeneration } from "@/app/api/agents/[agentId]/portrait/
 import { agentInputSchema } from "@/lib/domain/agent";
 import { extractAgentReplySections } from "@/lib/domain/agent-reply";
 import { db } from "@/lib/db";
+import { portraitImageUrl } from "@/lib/image-url";
 import { interpretAgentReply } from "@/lib/ai/interpret-agent-reply";
 import { normalizeAgent } from "@/lib/ai/normalize-agent";
 import { moderateAgentInput } from "@/lib/moderation/moderate-agent-input";
@@ -96,7 +97,8 @@ export async function prepareAgentDraft(reply: string): Promise<PrepareAgentDraf
     };
   }
 
-  const interpreted = buildDraft(await interpretAgentReply(reply));
+  const raw = await interpretAgentReply(reply);
+  const interpreted = buildDraft({ ...raw, weirdHook: raw.weirdHook ?? undefined });
   const merged = buildDraft({
     name: structured.name || interpreted.name,
     description: structured.description || interpreted.description,
@@ -215,9 +217,14 @@ export async function createAgent(input: CreateAgentInput) {
     },
   });
 
-  const updatedAgent = await queuePortraitGeneration(agent.id);
+  let finalAgent = agent;
+  try {
+    finalAgent = await completePortraitGeneration(agent.id);
+  } catch {
+    // Portrait generation failed — agent is still usable without it
+  }
 
-  return { agent: updatedAgent ?? agent };
+  return { agent: finalAgent };
 }
 
 function splitTags(value: FormDataEntryValue | null) {
@@ -254,14 +261,6 @@ export async function createAgentFromReply(formData: FormData) {
   return createAgent(draftResult.draft);
 }
 
-async function queuePortraitGeneration(agentId: string) {
-  try {
-    return await completePortraitGeneration(agentId);
-  } catch {
-    return null;
-  }
-}
-
 export type CreateAgentState = {
   agent: {
     id: string;
@@ -280,31 +279,39 @@ export async function createAgentAction(
   _prev: CreateAgentState,
   formData: FormData,
 ): Promise<CreateAgentState> {
-  const reply = String(formData.get("reply") ?? "");
-  const draftResult = await prepareAgentDraft(reply);
+  try {
+    const reply = String(formData.get("reply") ?? "");
+    const draftResult = await prepareAgentDraft(reply);
 
-  if ("error" in draftResult) {
-    return { agent: null, error: draftResult.error ?? "Could not parse the reply." };
+    if ("error" in draftResult) {
+      return { agent: null, error: draftResult.error ?? "Could not parse the reply." };
+    }
+
+    const result = await createAgent(draftResult.draft);
+
+    if ("error" in result) {
+      return { agent: null, error: result.error ?? "Something went wrong." };
+    }
+
+    const a = result.agent;
+    return {
+      agent: {
+        id: a.id,
+        name: a.name,
+        description: a.description,
+        vibeTags: Array.isArray(a.vibeTags) ? (a.vibeTags as string[]) : [],
+        personalityTags: Array.isArray(a.personalityTags) ? (a.personalityTags as string[]) : [],
+        weirdHook: a.weirdHook,
+        portraitUrl: portraitImageUrl(a.id, a.portraitUrl),
+        portraitStatus: a.portraitStatus,
+      },
+      error: null,
+    };
+  } catch (error) {
+    console.error("createAgentAction failed:", error);
+    return {
+      agent: null,
+      error: error instanceof Error ? error.message : "Something went wrong creating the agent.",
+    };
   }
-
-  const result = await createAgent(draftResult.draft);
-
-  if ("error" in result) {
-    return { agent: null, error: result.error ?? "Something went wrong." };
-  }
-
-  const a = result.agent;
-  return {
-    agent: {
-      id: a.id,
-      name: a.name,
-      description: a.description,
-      vibeTags: Array.isArray(a.vibeTags) ? (a.vibeTags as string[]) : [],
-      personalityTags: Array.isArray(a.personalityTags) ? (a.personalityTags as string[]) : [],
-      weirdHook: a.weirdHook,
-      portraitUrl: a.portraitUrl,
-      portraitStatus: a.portraitStatus,
-    },
-    error: null,
-  };
 }

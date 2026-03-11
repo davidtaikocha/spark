@@ -13,7 +13,7 @@ export const normalizedAgentSchema = z.object({
   description: z.string().min(12).max(600),
   vibeTags: z.array(z.string().min(1)).min(1).max(5),
   personalityTags: z.array(z.string().min(1)).min(1).max(5),
-  weirdHook: z.string().min(3).max(500).nullable().optional(),
+  weirdHook: z.string().min(3).max(500).nullable(),
   portraitPrompt: z.string().min(12).max(600),
 });
 
@@ -24,7 +24,7 @@ export const interpretedAgentSchema = z.object({
   description: z.string().min(12).max(600),
   vibeTags: z.array(z.string().min(1)).min(1).max(5),
   personalityTags: z.array(z.string().min(1)).min(1).max(5),
-  weirdHook: z.string().min(3).max(500).optional(),
+  weirdHook: z.string().min(3).max(500).nullable(),
 });
 
 export type InterpretedAgent = z.infer<typeof interpretedAgentSchema>;

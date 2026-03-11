@@ -63,7 +63,7 @@ export function mockInterpretAgentReply(reply: string): InterpretedAgent {
       ),
     vibeTags: cleanTagList(extracted.vibeTags, ["romantic", "strange"]),
     personalityTags: cleanTagList(extracted.personalityTags, ["earnest", "chaotic"]),
-    weirdHook: extracted.weirdHook,
+    weirdHook: extracted.weirdHook ?? null,
   };
 }
 

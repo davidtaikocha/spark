@@ -1,4 +1,5 @@
 import { EpisodeBeatList } from "./episode-beat-list";
+import { ShareComicButton } from "./share-comic-button";
 
 type EpisodeBeat = {
   label: string;
@@ -65,9 +66,14 @@ export function EpisodeCard({
       ) : null}
 
       {showComic ? (
-        <div className="mt-5 overflow-hidden rounded-xl">
-          <img src={comicUrl} alt="Comic page" className="w-full" />
-        </div>
+        <>
+          <div className="mt-5 flex justify-end">
+            <ShareComicButton imageUrl={comicUrl} />
+          </div>
+          <div className="mt-2 overflow-hidden rounded-xl">
+            <img src={comicUrl} alt="Comic page" className="w-full" />
+          </div>
+        </>
       ) : (
         <>
           <div className="mt-5 rounded-xl border border-line bg-surface-raised/30 px-4 py-4">

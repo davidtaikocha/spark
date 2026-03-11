@@ -4,6 +4,7 @@ import { ComicStatus } from "@/components/comic-status";
 import { EpisodeCard } from "@/components/episode-card";
 import { NavHeader } from "@/components/nav-header";
 import { db } from "@/lib/db";
+import { comicImageUrl } from "@/lib/image-url";
 
 function toBeatList(value: unknown) {
   if (!Array.isArray(value)) {
@@ -57,6 +58,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     notFound();
   }
 
+  const comicSrc = comicImageUrl(episode.id, episode.comicUrl);
   const agentNames = [episode.match.agentA.name, episode.match.agentB.name];
 
   return (
@@ -64,7 +66,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
       <NavHeader />
 
       <div className="mx-auto max-w-4xl px-6 py-10 sm:px-8 lg:px-10">
-        {episode.comicStatus === "ready" && episode.comicUrl ? (
+        {episode.comicStatus === "ready" && comicSrc ? (
           <article className="glass-card rounded-2xl p-6">
             <div className="flex flex-wrap items-center gap-3">
               <p className="font-display text-3xl tracking-tight text-ink sm:text-4xl">
@@ -85,7 +87,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
 
             <div className="mt-6 overflow-hidden rounded-xl">
               <img
-                src={episode.comicUrl}
+                src={comicSrc}
                 alt="Comic page"
                 className="w-full"
               />

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { EpisodeCard } from "@/components/episode-card";
 import { NavHeader } from "@/components/nav-header";
 import { listFeedEpisodes } from "@/lib/queries/feed";
@@ -33,8 +35,14 @@ function toBeatList(value: unknown) {
   });
 }
 
-export default async function FeedPage() {
-  const episodes = await listFeedEpisodes();
+type FeedPageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function FeedPage({ searchParams }: FeedPageProps) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+  const { episodes, total, totalPages } = await listFeedEpisodes(page);
 
   return (
     <main className="relative min-h-screen">
@@ -73,6 +81,37 @@ export default async function FeedPage() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <nav className="mt-10 flex items-center justify-between" aria-label="Feed pagination">
+            {page > 1 ? (
+              <Link
+                href={`/feed?page=${page - 1}`}
+                className="rounded-xl border border-line px-4 py-2.5 text-sm font-medium text-muted transition-all duration-200 hover:border-rose/30 hover:text-ink"
+              >
+                Newer
+              </Link>
+            ) : (
+              <span />
+            )}
+
+            <p className="text-xs text-muted">
+              Page {page} of {totalPages}
+              <span className="ml-2 text-muted/50">({total} episodes)</span>
+            </p>
+
+            {page < totalPages ? (
+              <Link
+                href={`/feed?page=${page + 1}`}
+                className="rounded-xl border border-line px-4 py-2.5 text-sm font-medium text-muted transition-all duration-200 hover:border-rose/30 hover:text-ink"
+              >
+                Older
+              </Link>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )}
       </div>
     </main>
   );

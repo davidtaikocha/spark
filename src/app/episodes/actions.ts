@@ -13,14 +13,6 @@ function toTagList(value: unknown) {
   return value.filter((item): item is string => typeof item === "string");
 }
 
-async function queueComicGeneration(episodeId: string) {
-  try {
-    return await completeComicGeneration(episodeId);
-  } catch {
-    return null;
-  }
-}
-
 export async function generateEpisodeForMatch(matchId: string) {
   const match = await db.match.findUniqueOrThrow({
     where: { id: matchId },
@@ -79,10 +71,15 @@ export async function generateEpisodeForMatch(matchId: string) {
     },
   });
 
-  const updatedEpisode = await queueComicGeneration(createdEpisode.id);
+  let finalEpisode = createdEpisode;
+  try {
+    finalEpisode = await completeComicGeneration(createdEpisode.id);
+  } catch {
+    // Comic generation failed — episode is still usable without it
+  }
 
   return {
-    ...(updatedEpisode ?? createdEpisode),
+    ...finalEpisode,
     beats: episode.beats,
     shareSummary: episode.shareSummary,
   };

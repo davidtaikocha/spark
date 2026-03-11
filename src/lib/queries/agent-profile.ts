@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { portraitImageUrl } from "@/lib/image-url";
 
 export async function getAgentProfile(agentId: string) {
   const agent = await db.agent.findUnique({
@@ -29,7 +30,7 @@ export async function getAgentProfile(agentId: string) {
   });
 
   return {
-    agent,
+    agent: { ...agent, portraitUrl: portraitImageUrl(agent.id, agent.portraitUrl) },
     episodes,
   };
 }

@@ -206,6 +206,7 @@ export function CreationOverlay({
       setVisible(true);
       setStepIndex(0);
       setElapsed(0);
+      window.scrollTo({ top: 0 });
     } else if (visible) {
       const timeout = setTimeout(() => setVisible(false), 600);
       return () => clearTimeout(timeout);
