@@ -17,6 +17,9 @@ importers:
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
+      '@resvg/resvg-js-darwin-arm64':
+        specifier: 2.6.2
+        version: 2.6.2
       ai:
         specifier: 6.0.116
         version: 6.0.116(zod@4.3.6)
@@ -2552,8 +2555,7 @@ snapshots:
   '@resvg/resvg-js-android-arm64@2.6.2':
     optional: true
 
-  '@resvg/resvg-js-darwin-arm64@2.6.2':
-    optional: true
+  '@resvg/resvg-js-darwin-arm64@2.6.2': {}
 
   '@resvg/resvg-js-darwin-x64@2.6.2':
     optional: true
