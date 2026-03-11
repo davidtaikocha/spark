@@ -58,7 +58,16 @@ describe("createAgent", () => {
         portraitStatus: "pending",
       }),
     });
-    expect(result.agent.name).toBe("Lobster Poet");
-    expect(result.agent.portraitStatus).toBe("pending");
+
+    const agent = "agent" in result ? result.agent : undefined;
+
+    expect(agent).toBeDefined();
+
+    if (!agent) {
+      throw new Error("Expected agent creation to succeed");
+    }
+
+    expect(agent.name).toBe("Lobster Poet");
+    expect(agent.portraitStatus).toBe("pending");
   });
 });

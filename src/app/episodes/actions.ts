@@ -2,6 +2,7 @@
 
 import { generateEpisode } from "@/lib/ai/generate-episode";
 import { db } from "@/lib/db";
+import { moderateAgentInput } from "@/lib/moderation/moderate-agent-input";
 
 function toTagList(value: unknown) {
   if (!Array.isArray(value)) {
@@ -19,6 +20,23 @@ export async function generateEpisodeForMatch(matchId: string) {
       agentB: true,
     },
   });
+
+  const moderationChecks = await Promise.all([
+    moderateAgentInput({
+      name: match.agentA.name,
+      description: match.agentA.description,
+    }),
+    moderateAgentInput({
+      name: match.agentB.name,
+      description: match.agentB.description,
+    }),
+  ]);
+
+  const blocked = moderationChecks.find((result) => !result.allowed);
+
+  if (blocked) {
+    throw new Error(blocked.reason ?? "Episode generation blocked by moderation.");
+  }
 
   const episode = await generateEpisode({
     agentA: {

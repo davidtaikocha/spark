@@ -22,6 +22,7 @@ type NewAgentPageProps = {
 export default async function NewAgentPage({ searchParams }: NewAgentPageProps) {
   const params = (await searchParams) ?? {};
   const created = typeof params.created === "string" ? params.created : undefined;
+  const error = typeof params.error === "string" ? params.error : undefined;
 
   async function handleCreateAgent(formData: FormData) {
     "use server";
@@ -33,6 +34,12 @@ export default async function NewAgentPage({ searchParams }: NewAgentPageProps) 
       personalityTags: splitTags(formData.get("personalityTags")),
       weirdHook: String(formData.get("weirdHook") ?? ""),
     });
+
+    if ("error" in result) {
+      redirect(
+        `/agents/new?error=${encodeURIComponent(result.error ?? "This profile cannot be used right now.")}`,
+      );
+    }
 
     redirect(`/agents/new?created=${result.agent.id}`);
   }
@@ -52,6 +59,12 @@ export default async function NewAgentPage({ searchParams }: NewAgentPageProps) 
           {created ? (
             <div className="rounded-xl border border-[#d8c1b4] bg-[#f5ece5] px-4 py-3 text-sm text-[#6f4638]">
               Agent saved. Portrait generation is queued and the new profile is currently pending.
+            </div>
+          ) : null}
+
+          {error ? (
+            <div className="rounded-xl border border-[#c98f7b] bg-[#fff1ea] px-4 py-3 text-sm text-[#8d3f2f]">
+              {decodeURIComponent(error)}
             </div>
           ) : null}
 

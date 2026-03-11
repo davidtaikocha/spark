@@ -4,6 +4,7 @@ import { completePortraitGeneration } from "@/app/api/agents/[agentId]/portrait/
 import { agentInputSchema } from "@/lib/domain/agent";
 import { db } from "@/lib/db";
 import { normalizeAgent } from "@/lib/ai/normalize-agent";
+import { moderateAgentInput } from "@/lib/moderation/moderate-agent-input";
 
 type CreateAgentInput = {
   name: string;
@@ -20,6 +21,17 @@ export async function createAgent(input: CreateAgentInput) {
     sourceType: "user",
     visibility: "public",
   });
+
+  const moderation = await moderateAgentInput({
+    name: parsed.name,
+    description: parsed.description,
+  });
+
+  if (!moderation.allowed) {
+    return {
+      error: moderation.reason ?? "This profile cannot be used right now.",
+    };
+  }
 
   const normalized = await normalizeAgent(parsed);
   const agent = await db.agent.create({
