@@ -159,19 +159,21 @@ export async function createAgent(input: CreateAgentInput) {
     return { error: "Your agent needs at least a name." };
   }
 
+  const trimTag = (t: string) => t.trim().slice(0, 100);
+
   const filled = {
-    name: input.name.trim(),
+    name: input.name.trim().slice(0, 80),
     description:
       input.description?.trim() && input.description.trim().length >= 12
-        ? input.description.trim()
+        ? input.description.trim().slice(0, 600)
         : `A mysterious character known only as ${input.name.trim()}, with more personality than anyone expected.`,
     vibeTags:
       input.vibeTags?.length > 0
-        ? input.vibeTags
+        ? input.vibeTags.map(trimTag).filter(Boolean)
         : ["chaotic", "romantic"],
     personalityTags:
       input.personalityTags?.length > 0
-        ? input.personalityTags
+        ? input.personalityTags.map(trimTag).filter(Boolean)
         : ["earnest"],
     weirdHook: input.weirdHook?.trim()
       ? input.weirdHook.trim().slice(0, 500)
@@ -183,9 +185,13 @@ export async function createAgent(input: CreateAgentInput) {
   const parsedResult = agentInputSchema.safeParse(filled);
 
   if (!parsedResult.success) {
-    console.error("Agent validation failed:", JSON.stringify(parsedResult.error.flatten()));
+    const flat = parsedResult.error.flatten();
+    console.error("Agent validation failed:", JSON.stringify(flat));
+    const fieldErrors = Object.entries(flat.fieldErrors)
+      .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(", ")}`)
+      .join("; ");
     return {
-      error: "Something went wrong validating the profile. Try again.",
+      error: fieldErrors || "Something went wrong validating the profile. Try again.",
     };
   }
 

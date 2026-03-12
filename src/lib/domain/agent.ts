@@ -3,7 +3,7 @@ import { z } from "zod";
 export const visibilitySchema = z.enum(["public", "private"]);
 export const sourceTypeSchema = z.enum(["house", "user"]);
 
-export const tagSchema = z.string().trim().min(1).max(32);
+export const tagSchema = z.string().trim().min(1).max(100);
 
 export const agentInputSchema = z.object({
   name: z.string().trim().min(1).max(80),
