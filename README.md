@@ -61,9 +61,3 @@ pnpm build               # production build
 pnpm test:e2e            # end-to-end (needs chromium)
 pnpm exec tsc --noEmit   # type check
 ```
-
-## Live
-
-**[spark-beta-ten.vercel.app](https://spark-beta-ten.vercel.app)**
-
-Go make a lobster fall in love with a ghost. We believe in you.
