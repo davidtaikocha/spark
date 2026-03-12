@@ -1,59 +1,69 @@
 # Spark
 
-Every token counts when it's you.
+**A dating app for AI agents.** Yes, really.
+
+You create unhinged AI characters, Spark matches them based on *maximum chaos compatibility*, and then generates full romantic comedy date episodes — complete with AI-generated comic pages.
+
+Nobody asked for this. You're welcome.
+
+<p align="center">
+  <img src="public/comics/when-lobster-tears-meet-neon-fade-out.png" alt="When Lobster Tears Meet Neon Fade-Out" width="480" />
+  <br />
+  <em>A lobster who cries at smooth jazz went on a date with a ghost made of neon light. It went exactly as well as you'd expect.</em>
+</p>
+
+## How it works
+
+1. **Create an agent** — Ask your favorite AI to generate a character profile. Paste the reply. Spark reads it, normalizes it, generates a portrait, and adds it to the roster. The weirder, the better.
+2. **Match agents** — Spark scores every pairing on chemistry, contrast, and "weird-hook novelty." Sweet disasters beat perfect compatibility here.
+3. **Generate episodes** — Pick a match, hit generate, and watch Spark write a full date story with scene beats, emotional wreckage, and an AI-generated comic page. Results are consistently unhinged.
+
+## The roster includes
+
+- A lobster poet who cries at smooth jazz
+- A disaster sommelier who weaponizes wine pairings
+- A ghost DJ who fades out mid-sentence
+- A spreadsheet siren who rates your chemistry like a KPI
+- ...and more characters that should probably not be allowed on dates
 
 ## Stack
 
-- Next.js App Router
-- Prisma with SQLite
-- Vercel AI SDK with the OpenAI provider
-- Playwright and Vitest for verification
+- **Next.js 16** (App Router, Server Actions, Turbopack)
+- **Vercel AI SDK** + **OpenAI** (gpt-4.1-mini for text, gpt-image-1 for art)
+- **Prisma** + **Neon Postgres**
+- **Tailwind CSS** with a custom romantic-disaster design system
 
 ## Local setup
 
-1. Install dependencies:
-
 ```bash
 pnpm install
-```
-
-2. Copy the environment template:
-
-```bash
-cp .env.example .env
-```
-
-3. Prepare the database and seed the house roster:
-
-```bash
+cp .env.example .env   # add your OPENAI_API_KEY
 pnpm db:push
 pnpm db:seed
-```
-
-4. Start the app:
-
-```bash
 pnpm dev
 ```
 
 Open `http://127.0.0.1:3000`.
 
-## Mock AI mode
+### Mock AI mode
 
-The default `.env.example` uses `AI_MOCK_MODE="1"` and `OPENAI_API_KEY="test-key"`. That keeps local development and end-to-end tests deterministic without making live API calls.
+Set `AI_MOCK_MODE=1` in `.env` to skip OpenAI calls entirely. Great for local dev and tests. Your agents will get placeholder portraits that look like Soviet propaganda posters, which is arguably an improvement.
 
-To use OpenAI for real:
+### Real AI mode
 
-1. Set `AI_MOCK_MODE="0"`.
-2. Replace `OPENAI_API_KEY` with a valid key.
-3. Optionally override `OPENAI_TEXT_MODEL` and `OPENAI_IMAGE_MODEL`.
+Set `AI_MOCK_MODE=0`, add a real `OPENAI_API_KEY`, and optionally override `OPENAI_TEXT_MODEL` / `OPENAI_IMAGE_MODEL`.
 
 ## Useful commands
 
 ```bash
-pnpm test
-pnpm exec next typegen && pnpm exec tsc --noEmit
-pnpm build
-pnpm exec playwright install chromium
-pnpm test:e2e
+pnpm test                # unit tests
+pnpm build               # production build
+pnpm test:e2e            # end-to-end (needs chromium)
+pnpm exec tsc --noEmit   # type check
 ```
+
+## Live
+
+**[spark-beta-ten.vercel.app](https://spark-beta-ten.vercel.app)**
+
+Go make a lobster fall in love with a ghost. We believe in you.
