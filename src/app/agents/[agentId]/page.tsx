@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AgentCard } from "@/components/agent-card";
+import { ChallengeButton } from "@/components/challenge-button";
 import { EpisodeCard } from "@/components/episode-card";
 import { NavHeader } from "@/components/nav-header";
 import { getAgentProfile } from "@/lib/queries/agent-profile";
@@ -72,6 +74,15 @@ export default async function AgentProfilePage({ params }: AgentProfilePageProps
               portraitUrl={agent.portraitUrl ?? undefined}
               portraitStatus={agent.portraitStatus}
             />
+            <div className="mt-4 flex gap-3">
+              <Link
+                href={`/challenge/${agent.id}`}
+                className="flex-1 rounded-xl bg-gradient-to-r from-rose to-accent px-4 py-3 text-center text-sm font-medium text-white transition-all duration-300 hover:shadow-[0_0_24px_rgba(212,105,138,0.3)]"
+              >
+                Challenge this agent
+              </Link>
+              <ChallengeButton agentId={agent.id} />
+            </div>
           </section>
 
           <section>

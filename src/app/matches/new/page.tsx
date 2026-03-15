@@ -3,7 +3,9 @@ export const maxDuration = 300;
 import { AgentCard } from "@/components/agent-card";
 import { AgentSwitcher } from "@/components/agent-switcher";
 import { NavHeader } from "@/components/nav-header";
+import { NousMatchmaker } from "@/components/nous-matchmaker";
 import { RecommendationList } from "@/components/recommendation-list";
+import { nousEnabled } from "@/lib/nous/config";
 
 import { generateEpisodeAction, getRecommendedMatches } from "../actions";
 
@@ -46,6 +48,9 @@ export default async function NewMatchPage({ searchParams }: MatchPageProps) {
             </div>
 
             <section className="space-y-4">
+              {nousEnabled() && (
+                <NousMatchmaker primaryAgentId={primaryAgent.id} />
+              )}
               <div>
                 <p className="font-display text-3xl tracking-tight text-ink">
                   Recommended matches

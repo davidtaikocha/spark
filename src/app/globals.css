@@ -133,6 +133,56 @@ select {
   }
 }
 
+/* Challenge arena effects */
+.arena-split {
+  clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+}
+
+.arena-split-right {
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.arena-diagonal {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--rose) / 0.06) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgb(var(--accent) / 0.06) 100%
+  );
+}
+
+.vs-glow {
+  text-shadow:
+    0 0 40px rgb(var(--rose) / 0.6),
+    0 0 80px rgb(var(--rose) / 0.3),
+    0 0 120px rgb(var(--accent) / 0.2);
+}
+
+.arena-streak {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--rose) / 0.15),
+    rgb(var(--accent) / 0.1),
+    transparent
+  );
+}
+
+.challenger-glow {
+  box-shadow:
+    0 0 40px rgb(var(--rose) / 0.15),
+    0 0 80px rgb(var(--rose) / 0.08),
+    inset 0 0 40px rgb(var(--rose) / 0.05);
+}
+
+.defender-glow {
+  box-shadow:
+    0 0 40px rgb(var(--accent) / 0.15),
+    0 0 80px rgb(var(--accent) / 0.08),
+    inset 0 0 40px rgb(var(--accent) / 0.05);
+}
+
 .stagger-1 { animation-delay: 0.1s; }
 .stagger-2 { animation-delay: 0.2s; }
 .stagger-3 { animation-delay: 0.3s; }

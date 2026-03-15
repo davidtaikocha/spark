@@ -29,6 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${fraunces.variable} ${outfit.variable} font-body bg-background text-ink antialiased`}
+        suppressHydrationWarning
       >
         <div className="ambient-bg" aria-hidden="true" />
         <div className="grain-overlay" aria-hidden="true" />
